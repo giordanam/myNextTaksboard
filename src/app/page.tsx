@@ -11,89 +11,88 @@ import { Task } from '@/constants';
 import { FilterProvider } from '@/contexts/FilterContext';
 
 export default function Page() {
-  const [tasks, setTasks] = useState<Task[]>(() => {
-    // Aggiungiamo questa riga per proteggere il server di Next.js!
-    if (typeof window === 'undefined') return [];
+    const [tasks, setTasks] = useState<Task[]>([]);
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
-    try {
-      const savedTasks = localStorage.getItem('tasks');
-      return savedTasks ? JSON.parse(savedTasks) : [];
-    } catch (error) {
-      console.error('LocalStorage data corrupted.', error);
-      return [];
-    }
-  });
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-  // Se non ci sono task salvate, al primo render partiamo gia` in stato
-  // "loading": evita di dover impostare lo stato in modo sincrono dentro
-  // l'effect (che React considera un anti-pattern: causa un render extra).
-  const [fetchStatus, setFetchStatus] = useState<FetchStatus>(() =>
-    tasks.length === 0 ? 'loading' : 'idle'
-  );
-  const [errorMessage, setErrorMessage] = useState('');
-  const fetchTasksData = async (signal?: AbortSignal) => {
-    try {
-      //await new Promise((resolve) => setTimeout(resolve, 3000));
-      const response = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=4', {
-        //aggancio del segnale alla fetch
-        signal,
-      });
+    // Partiamo da 'idle' (HTML identico tra Server e Client)
+    const [fetchStatus, setFetchStatus] = useState<FetchStatus>('idle');
+    const [errorMessage, setErrorMessage] = useState('');
 
-      if (!response.ok) {
-        throw new Error('Failed to fetch data');
-      }
+    // Ci serve per sapere se abbiamo già finito il primo render
+    const [isMounted, setIsMounted] = useState(false);
 
-      const data = await response.json();
-      const newTasks = formatFetchedTasks(data);
-      setTasks((prevTasks) => [...prevTasks, ...newTasks]);
-      setErrorMessage('');
-      setFetchStatus('success');
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') {
-          console.log('Fetch annullata da React strict mode');
-          return;
+    const fetchTasksData = async (signal?: AbortSignal) => {
+      try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=4', { signal });
+        if (!response.ok) throw new Error('Failed to fetch data');
+
+        const data = await response.json();
+        const newTasks = formatFetchedTasks(data);
+        setTasks((prevTasks) => [...prevTasks, ...newTasks]);
+        setErrorMessage('');
+        setFetchStatus('success');
+      } catch (error) {
+        if (error instanceof Error) {
+          if (error.name === 'AbortError') return;
+          setErrorMessage(error.message);
+        } else {
+          setErrorMessage('Si è verificato un errore sconosciuto');
         }
-        setErrorMessage(error.message);
-      } else {
-        // Se per qualche strano motivo l'errore non fosse un oggetto Error standard
-        setErrorMessage('Si è verificato un errore sconosciuto');
+        setFetchStatus('error');
       }
-      setFetchStatus('error');
-    }
-  };
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    if (tasks.length === 0) {
-      // fetchTasksData aggiorna lo stato solo dopo un `await` (quindi in modo
-      // asincrono): react-hooks/set-state-in-effect segnala comunque un falso
-      // positivo perché non riesce a tracciare il confine asincrono quando la
-      // funzione è definita fuori dall'effect (bug noto del plugin).
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      fetchTasksData(controller.signal);
-    }
-
-    return () => {
-      // Se React (a causa dello StrictMode) decide di distruggere e ricreare
-      // il componente in un millisecondo, tiriamo il freno a mano della vecchia fetch
-      controller.abort();
     };
-    // Effetto da eseguire solo al mount: vogliamo controllare lo stato
-    // iniziale di `tasks`, non rieseguire il fetch ogni volta che cambia.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+
+    // 2. Al primo render completato, leggiamo il localStorage IN MODO SICURO
+    useEffect(() => {
+      let parsedTasks: Task[] = [];
+      try {
+        const savedTasks = localStorage.getItem('tasks');
+        if (savedTasks) {
+          const parsed: unknown = JSON.parse(savedTasks);
+          if (Array.isArray(parsed)) parsedTasks = parsed as Task[];
+          else localStorage.removeItem('tasks');
+        }
+      } catch (e) {
+        console.error('LocalStorage data corrupted.', e);
+        try {
+          localStorage.removeItem('tasks');
+        } catch {
+          // storage non disponibile
+        }
+      }
+
+      // Hydration-safe: localStorage è leggibile solo dopo il mount
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsMounted(true);
+
+      if (parsedTasks.length > 0) {
+        // Avevamo già dati salvati, li carichiamo nello stato
+        setTasks(parsedTasks);
+        return;
+      }
+
+      // Non c'è nulla di salvato, facciamo partire la fetch!
+      setFetchStatus('loading');
+      const controller = new AbortController();
+      fetchTasksData(controller.signal);
+      return () => controller.abort();
+    }, []);
+
+    // 3. Salviamo nel localStorage ad ogni modifica, ma SOLO dopo il mount iniziale
+    useEffect(() => {
+      if (!isMounted) return;
+      try {
+        localStorage.setItem('tasks', JSON.stringify(tasks));
+      } catch (e) {
+        console.error('Unable to save tasks to LocalStorage.', e);
+      }
+    }, [tasks, isMounted]);
 
   const handleDownloadClick = async () => {
     setFetchStatus('loading');
     await fetchTasksData();
   };
-
-  useEffect(() => {
-    localStorage.setItem('tasks', JSON.stringify(tasks));
-  }, [tasks]);
 
   function addTask(newTaskData: Task) {
     const newTask = {
