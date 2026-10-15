@@ -3,6 +3,7 @@ import { STATUS, Task } from '@/constants';
 import { useFilters } from '@/contexts/FilterContext';
 import { getFilteredTasks } from '@/utils/filterUtils';
 import { IconPlus, IconSearch } from './Icons';
+import { memo } from 'react';
 
 interface ListProps {
   tasks: Task[];
@@ -10,7 +11,7 @@ interface ListProps {
   onEditTask: (task: Task) => void;
 }
 
-export default function List({ tasks, hasTasks, onEditTask }: ListProps) {
+function List({ tasks, hasTasks, onEditTask }: ListProps) {
   const filters = useFilters();
   const filteredTasks = getFilteredTasks(tasks, filters);
   //caso in cui non ci sono task in generale o trovate dai filtri esce il div per comunicarlo all'utente
@@ -51,3 +52,5 @@ export default function List({ tasks, hasTasks, onEditTask }: ListProps) {
     </div>
   );
 }
+
+export default memo(List);

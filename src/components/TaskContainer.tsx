@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import List from './List';
 import DetailModal from './DetailModal';
 import Header from './Header';
@@ -93,10 +93,10 @@ export default function TaskContainer({ initialTasks }: TaskContainerProps) {
     );
   }
 
-  function handleEditTask(taskToEdit: Task) {
+  const handleEditTask = useCallback((taskToEdit: Task) => {
     setSelectedTask(taskToEdit);
     setModalOpen(true);
-  }
+  }, []); // L'array vuoto significa: crea questa funzione una volta sola e non ricrearla mai più
 
   function handleSaveForm(taskData: Task) {
     if (selectedTask) {
