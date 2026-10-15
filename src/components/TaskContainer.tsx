@@ -1,48 +1,27 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import List from './List';
 import DetailModal from './DetailModal';
 import Header from './Header';
 import FetchStatusToast, { FetchStatus } from './FetchStatusToast';
 import FilterBar from './FilterBar';
-import { formatFetchedTasks } from '@/utils/apiUtils';
+import { fetchTasks } from '@/services/tasksApi';
 import { Task } from '@/constants';
 
-// Questo è il nuovo "gestore" della logica, rigorosamente Client-side
-export default function TaskContainer() {
-  const [tasks, setTasks] = useState<Task[]>([]);
+interface TaskContainerProps {
+  initialTasks: Task[];
+}
+
+export default function TaskContainer({ initialTasks }: TaskContainerProps) {
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
-
   const [fetchStatus, setFetchStatus] = useState<FetchStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
-
   const [isMounted, setIsMounted] = useState(false);
 
-  const fetchTasksData = async (signal?: AbortSignal) => {
-    try {
-      const response = await fetch('https://jsonplaceholder.typicode.com/todos?_limit=4', {
-        signal,
-      });
-      if (!response.ok) throw new Error('Failed to fetch data');
-
-      const data = await response.json();
-      const newTasks = formatFetchedTasks(data);
-      setTasks((prevTasks) => [...prevTasks, ...newTasks]);
-      setErrorMessage('');
-      setFetchStatus('success');
-    } catch (error) {
-      if (error instanceof Error) {
-        if (error.name === 'AbortError') return;
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage('Si è verificato un errore sconosciuto');
-      }
-      setFetchStatus('error');
-    }
-  };
-
+  // controllo di locastorage al mount (se c'è, sovrascrive i task del server)
   useEffect(() => {
     let parsedTasks: Task[] = [];
     try {
@@ -66,13 +45,9 @@ export default function TaskContainer() {
       setTasks(parsedTasks);
       return;
     }
-
-    setFetchStatus('loading');
-    const controller = new AbortController();
-    fetchTasksData(controller.signal);
-    return () => controller.abort();
   }, []);
 
+  //salvataggio automatico
   useEffect(() => {
     if (!isMounted) return;
     try {
@@ -84,7 +59,21 @@ export default function TaskContainer() {
 
   const handleDownloadClick = async () => {
     setFetchStatus('loading');
-    await fetchTasksData();
+    try {
+      const newTasks = await fetchTasks();
+
+      setTasks((prevTasks) => [...prevTasks, ...newTasks]);
+
+      setErrorMessage('');
+      setFetchStatus('success'); // Togli la rotellina, mostra verde
+    } catch (error) {
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage('Errore sconosciuto');
+      }
+      setFetchStatus('error'); // Mostra il toast di errore
+    }
   };
 
   function addTask(newTaskData: Task) {
