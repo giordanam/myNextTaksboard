@@ -1,4 +1,4 @@
-'use client'; //si mette nel caso in cui si stanno modificando gli stati (useState)
+'use client'; 
 
 import { createContext, useContext, useState, ReactNode } from 'react';
 
@@ -18,7 +18,6 @@ interface FilterContextType {
 // Creiamo il contesto indicando che può essere o FilterContextType o null
 export const FilterContext = createContext<FilterContextType | null>(null);
 
-// Tipizziamo i figli del Provider (ReactNode significa "qualsiasi cosa che React può renderizzare")
 interface FilterProviderProps {
   children: ReactNode;
 }
