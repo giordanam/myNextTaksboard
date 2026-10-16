@@ -43,3 +43,6 @@ next-env.d.ts
 #webstorm / JetBrains
 .idea
 *.iml
+
+# vscode
+.vscode
