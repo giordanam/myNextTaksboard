@@ -10,14 +10,6 @@ export default function AboutPage() {
           potentissimo App Router di Next.js. Ogni cartella è una rotta, e il codice è completamente
           tipizzato!
         </p>
-
-        {/* Il Link di Next.js sostituisce il classico <a> per fare cambi di pagina istantanei senza ricaricare il browser */}
-        <Link
-          href="/"
-          className="bg-sky-600 text-white px-6 py-2 rounded-lg font-bold hover:bg-sky-700 transition-colors"
-        >
-          Torna alla Taskboard
-        </Link>
       </div>
     </div>
   );
