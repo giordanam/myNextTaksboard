@@ -16,8 +16,7 @@ interface TaskContextType {
   setFetchStatus: (status: FetchStatus) => void;
   handleDownloadClick: () => Promise<void>;
   deleteTask: (id: string | number) => void;
-  handleSaveForm: (taskData: Task) => void;
-  handleEditTask: (taskToEdit: Task) => void;
+  handleSaveForm: (taskData: Task) => Promise<Task> | Task;
 }
 
 export const TaskContext = createContext<TaskContextType | null>(null);
@@ -89,6 +88,7 @@ export function TaskProvider({ children, initialTasks }: TaskProviderProps) {
   function addTask(newTaskData: Task) {
     const newTask = { ...newTaskData, id: crypto.randomUUID() };
     setTasks((prevTasks) => [...prevTasks, newTask]);
+    return newTask;
   }
 
   function deleteTask(id: string | number) {
@@ -103,19 +103,20 @@ export function TaskProvider({ children, initialTasks }: TaskProviderProps) {
     );
   }
 
-  const handleEditTask = useCallback((taskToEdit: Task) => {
-    setSelectedTask(taskToEdit);
-    setIsModalOpen(true);
-  }, []);
+  async function handleSaveForm(taskData: Task) {
+    let savedTask: Task;
 
-  function handleSaveForm(taskData: Task) {
     if (selectedTask) {
-      editTask({ ...taskData, id: selectedTask.id });
+      savedTask = { ...taskData, id: selectedTask.id };
+      editTask(savedTask);
     } else {
-      addTask(taskData);
+      savedTask = addTask(taskData);
     }
+
     setIsModalOpen(false);
     setSelectedTask(null);
+
+    return savedTask;
   }
 
   return (
@@ -132,7 +133,6 @@ export function TaskProvider({ children, initialTasks }: TaskProviderProps) {
         handleDownloadClick,
         deleteTask,
         handleSaveForm,
-        handleEditTask,
       }}
     >
       {children}

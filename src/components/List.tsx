@@ -11,7 +11,7 @@ import { usePathname } from 'next/navigation';
 
 function List() {
   const filters = useFilters();
-  const { tasks, handleEditTask } = useTasks();
+  const { tasks } = useTasks();
   const filteredTasks = getFilteredTasks(tasks, filters);
   const pathname = usePathname();
   const isUserPage = pathname === '/user';
@@ -54,7 +54,7 @@ function List() {
             {displayedTasks
               .filter((task) => task.status === state.value)
               .map((task) => (
-                <Card key={task.id} task={task} onEditTask={() => handleEditTask(task)} />
+                <Card key={task.id} task={task} />
               ))}
           </div>
         </div>

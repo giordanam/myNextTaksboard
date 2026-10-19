@@ -1,16 +1,19 @@
 import { USERS, CATEGORIES, Task } from '@/constants';
 import { IconTime } from './Icons';
+import Link from 'next/link';
 
 interface CardProps {
   task: Task;
-  onEditTask: (task: Task) => void; // Diciamo a TS che è una funzione che riceve un task e non restituisce nulla (void)
 }
 
-export default function Card({ task, onEditTask }: CardProps) {
+export default function Card({ task }: CardProps) {
   const category = CATEGORIES.find((category) => task.category === category.value);
   const user = USERS.find((user) => task.user === user.value);
   return (
-    <div onClick={() => onEditTask(task)} className="bg-white p-4 rounded-lg shadow cursor-pointer">
+    <Link
+      href={`/task/${task.id}`}
+      className="bg-white p-4 rounded-lg shadow cursor-pointer block hover:shadow-md transition-shadow"
+    >
       <div className="mb-2">
         <span className="inline-block px-2 py-1 font-bold text-sky-700 bg-sky-100 rounded">
           {category?.label || 'no label'}
@@ -26,6 +29,6 @@ export default function Card({ task, onEditTask }: CardProps) {
           {user?.initials || '?'}
         </div>
       </div>
-    </div>
+    </Link>
   );
 }

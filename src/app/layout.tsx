@@ -10,7 +10,13 @@ export const metadata = {
   description: 'Gestione attività',
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+  modal,
+}: {
+  children: React.ReactNode;
+  modal: React.ReactNode;
+}) {
   const initialTasks = await fetchTasks();
 
   return (
@@ -19,10 +25,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <TaskProvider initialTasks={initialTasks}>
           <FilterProvider>
             <Header />
+            <GlobalModals />
             <main className="bg-gray-100 text-gray-800 min-h-screen">
               <div className="max-w-7xl mx-auto p-6">{children}</div>
+              {modal}
             </main>
-            <GlobalModals />
           </FilterProvider>
         </TaskProvider>
       </body>

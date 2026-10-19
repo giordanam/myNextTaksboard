@@ -3,8 +3,10 @@
 import DetailModal from './DetailModal';
 import FetchStatusToast from './FetchStatusToast';
 import { useTasks } from '@/contexts/TaskContext';
+import { useRouter } from 'next/navigation';
 
 export default function GlobalModals() {
+  const router = useRouter();
   const {
     isModalOpen,
     selectedTask,
@@ -13,10 +15,7 @@ export default function GlobalModals() {
     setIsModalOpen,
     setFetchStatus,
     handleSaveForm,
-    deleteTask,
   } = useTasks();
-
-  console.log(isModalOpen);
 
   return (
     <>
@@ -26,12 +25,24 @@ export default function GlobalModals() {
         errorMessage={errorMessage}
       />
 
-      {isModalOpen && (
+      {isModalOpen && !selectedTask && (
         <DetailModal
+          task={null} // Passiamo null perché stiamo creando una task nuova
           onClose={() => setIsModalOpen(false)}
-          onSave={handleSaveForm}
-          task={selectedTask}
-          onDelete={deleteTask}
+          onSave={async (taskData) => {
+            const newTask = await handleSaveForm(taskData);
+
+            // 2. Chiudiamo questo modale
+            setIsModalOpen(false);
+
+            // 3. IL REDIRECT! Andiamo alla rotta della nuova task
+            if (newTask && newTask.id) {
+              router.push(`/task/${newTask.id}`);
+            }
+          }}
+          onDelete={() => {
+            // Vuoto, perché non puoi eliminare una task che stai creando
+          }}
         />
       )}
     </>
