@@ -7,15 +7,8 @@ import { useRouter } from 'next/navigation';
 
 export default function GlobalModals() {
   const router = useRouter();
-  const {
-    isModalOpen,
-    selectedTask,
-    fetchStatus,
-    errorMessage,
-    setIsModalOpen,
-    setFetchStatus,
-    handleSaveForm,
-  } = useTasks();
+  const { isModalOpen, fetchStatus, errorMessage, setIsModalOpen, setFetchStatus, handleSaveForm } =
+    useTasks();
 
   return (
     <>
@@ -25,7 +18,7 @@ export default function GlobalModals() {
         errorMessage={errorMessage}
       />
 
-      {isModalOpen && !selectedTask && (
+      {isModalOpen && (
         <DetailModal
           task={null} // Passiamo null perché stiamo creando una task nuova
           onClose={() => setIsModalOpen(false)}

@@ -8,11 +8,9 @@ import { FetchStatus } from '@/components/FetchStatusToast';
 interface TaskContextType {
   tasks: Task[];
   isModalOpen: boolean;
-  selectedTask: Task | null;
   fetchStatus: FetchStatus;
   errorMessage: string;
   setIsModalOpen: (isOpen: boolean) => void;
-  setSelectedTask: (task: Task | null) => void;
   setFetchStatus: (status: FetchStatus) => void;
   handleDownloadClick: () => Promise<void>;
   deleteTask: (id: string | number) => void;
@@ -29,7 +27,6 @@ interface TaskProviderProps {
 export function TaskProvider({ children, initialTasks }: TaskProviderProps) {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [fetchStatus, setFetchStatus] = useState<FetchStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [isMounted, setIsMounted] = useState(false);
@@ -94,7 +91,6 @@ export function TaskProvider({ children, initialTasks }: TaskProviderProps) {
   function deleteTask(id: string | number) {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
     setIsModalOpen(false);
-    setSelectedTask(null);
   }
 
   function editTask(updatedTask: Task) {
@@ -105,16 +101,15 @@ export function TaskProvider({ children, initialTasks }: TaskProviderProps) {
 
   async function handleSaveForm(taskData: Task) {
     let savedTask: Task;
+    const taskID = tasks.find((task) => task.id === taskData.id);
 
-    if (selectedTask) {
-      savedTask = { ...taskData, id: selectedTask.id };
+    if (taskID) {
+      savedTask = { ...taskData, id: taskID.id };
       editTask(savedTask);
     } else {
       savedTask = addTask(taskData);
     }
-
     setIsModalOpen(false);
-    setSelectedTask(null);
 
     return savedTask;
   }
@@ -124,11 +119,9 @@ export function TaskProvider({ children, initialTasks }: TaskProviderProps) {
       value={{
         tasks,
         isModalOpen,
-        selectedTask,
         fetchStatus,
         errorMessage,
         setIsModalOpen,
-        setSelectedTask,
         setFetchStatus,
         handleDownloadClick,
         deleteTask,

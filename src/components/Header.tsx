@@ -7,7 +7,7 @@ import Button from './Button';
 import { IconPlus } from './Icons';
 
 export default function Header() {
-  const { setIsModalOpen, setSelectedTask } = useTasks();
+  const { setIsModalOpen } = useTasks();
   const pathname = usePathname();
 
   return (
@@ -50,7 +50,6 @@ export default function Header() {
         </div>
         <Button
           onClick={() => {
-            setSelectedTask(null);
             setIsModalOpen(true);
           }}
           className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm"
