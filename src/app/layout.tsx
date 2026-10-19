@@ -1,25 +1,30 @@
-import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
+import { fetchTasks } from '@/services/tasksApi';
+import { TaskProvider } from '@/contexts/TaskContext';
+import { FilterProvider } from '@/contexts/FilterContext';
+import Header from '@/components/Header';
+// Aggiusta i percorsi degli import se sono diversi nel tuo progetto!
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
-
-export const metadata: Metadata = {
-  title: 'My Tasboard',
+export const metadata = {
+  title: 'TaskBoard',
+  description: 'Gestione attività avanzata',
 };
 
-export default function RootLayout({ children }: LayoutProps<'/'>) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const initialTasks = await fetchTasks();
+
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="it">
+      <body>
+        <TaskProvider initialTasks={initialTasks}>
+          <FilterProvider>
+            <Header />
+            <main className="bg-gray-100 text-gray-800 min-h-screen">
+              <div className="max-w-7xl mx-auto p-6">{children}</div>
+            </main>
+          </FilterProvider>
+        </TaskProvider>
+      </body>
     </html>
   );
 }

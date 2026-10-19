@@ -1,18 +1,17 @@
+'use client';
+
 import Card from './Card';
 import { STATUS, Task } from '@/constants';
 import { useFilters } from '@/contexts/FilterContext';
+import { useTasks } from '@/contexts/TaskContext';
 import { getFilteredTasks } from '@/utils/filterUtils';
 import { IconPlus, IconSearch } from './Icons';
 import { memo } from 'react';
 
-interface ListProps {
-  tasks: Task[];
-  hasTasks: boolean;
-  onEditTask: (task: Task) => void;
-}
-
-function List({ tasks, hasTasks, onEditTask }: ListProps) {
+function List() {
   const filters = useFilters();
+  const { tasks, handleEditTask } = useTasks();
+  const hasTasks = tasks.length > 0;
   const filteredTasks = getFilteredTasks(tasks, filters);
   //caso in cui non ci sono task in generale o trovate dai filtri esce il div per comunicarlo all'utente
   if (filteredTasks.length === 0) {
@@ -44,7 +43,7 @@ function List({ tasks, hasTasks, onEditTask }: ListProps) {
             {filteredTasks
               .filter((task) => task.status === state.value)
               .map((task) => (
-                <Card key={task.id} task={task} onEditTask={onEditTask} />
+                <Card key={task.id} task={task} onEditTask={() => handleEditTask(task)} />
               ))}
           </div>
         </div>
