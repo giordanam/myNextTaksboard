@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Task } from '@/constants';
 import { fetchTasks } from '@/services/tasksApi';
 import { FetchStatus } from '@/components/FetchStatusToast';
@@ -48,6 +48,7 @@ export function TaskProvider({ children, initialTasks }: TaskProviderProps) {
       } catch {}
     }
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     if (parsedTasks.length > 0) {
       setTasks(parsedTasks);

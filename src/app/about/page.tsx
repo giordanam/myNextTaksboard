@@ -1,5 +1,3 @@
-import Link from 'next/link';
-
 export default function AboutPage() {
   return (
     <div className="bg-gray-100 text-gray-800 p-6 min-h-screen flex flex-col items-center justify-center">

@@ -18,6 +18,7 @@ export default function PaginaVeraTask({ params }: { params: Promise<{ id: strin
   const goHome = () => router.push('/');
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsReady(true);
   }, []);
 

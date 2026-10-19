@@ -22,6 +22,7 @@ export default function InterceptedTaskModal({ params }: { params: Promise<{ id:
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsReady(true);
   }, []);
 
