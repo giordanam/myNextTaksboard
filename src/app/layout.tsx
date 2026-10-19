@@ -3,11 +3,10 @@ import { fetchTasks } from '@/services/tasksApi';
 import { TaskProvider } from '@/contexts/TaskContext';
 import { FilterProvider } from '@/contexts/FilterContext';
 import Header from '@/components/Header';
-// Aggiusta i percorsi degli import se sono diversi nel tuo progetto!
 
 export const metadata = {
   title: 'TaskBoard',
-  description: 'Gestione attività avanzata',
+  description: 'Gestione attività',
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
