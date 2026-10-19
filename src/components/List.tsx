@@ -7,14 +7,15 @@ import { useTasks } from '@/contexts/TaskContext';
 import { getFilteredTasks } from '@/utils/filterUtils';
 import { IconPlus, IconSearch } from './Icons';
 import { memo } from 'react';
-import { usePathname } from 'next/navigation';
 
-function List() {
+interface ListProps {
+  isUserPage?: boolean;
+}
+
+function List({ isUserPage }: ListProps) {
   const filters = useFilters();
   const { tasks } = useTasks();
   const filteredTasks = getFilteredTasks(tasks, filters);
-  const pathname = usePathname();
-  const isUserPage = pathname === '/user';
 
   const displayedTasks = isUserPage
     ? filteredTasks.filter((task) => task.user === 'giordana')
