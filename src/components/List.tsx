@@ -1,31 +1,42 @@
 'use client';
 
 import Card from './Card';
-import { STATUS, Task } from '@/constants';
+import { STATUS } from '@/constants';
 import { useFilters } from '@/contexts/FilterContext';
 import { useTasks } from '@/contexts/TaskContext';
 import { getFilteredTasks } from '@/utils/filterUtils';
 import { IconPlus, IconSearch } from './Icons';
 import { memo } from 'react';
+import { usePathname } from 'next/navigation';
 
 function List() {
   const filters = useFilters();
   const { tasks, handleEditTask } = useTasks();
-  const hasTasks = tasks.length > 0;
   const filteredTasks = getFilteredTasks(tasks, filters);
-  //caso in cui non ci sono task in generale o trovate dai filtri esce il div per comunicarlo all'utente
-  if (filteredTasks.length === 0) {
+  const pathname = usePathname();
+  const isUserPage = pathname === '/user';
+
+  const displayedTasks = isUserPage
+    ? filteredTasks.filter((task) => task.user === 'giordana')
+    : filteredTasks;
+
+  const hasDisplayedTasks = displayedTasks.length > 0;
+  const hasTotalTasks = tasks.length > 0;
+
+  if (!hasDisplayedTasks) {
     return (
       <div className="mt-5 flex flex-col items-center justify-center gap-3 text-center bg-white border border-dashed border-gray-300 rounded-lg py-16 px-6">
-        {hasTasks ? (
+        {hasTotalTasks ? (
           <IconSearch className={'size-10 text-sky-500'} />
         ) : (
           <IconPlus className={'size-10 text-sky-500'} />
         )}
         <p className="font-bold text-gray-700">
-          {hasTasks
-            ? 'Nessun risultato trovato per questi filtri, mi spiace!'
-            : 'Non ci sono ancora attività. Creane una con il pulsante "Nuova attività".'}
+          {isUserPage
+            ? 'Ottimo lavoro Giordana! Non hai nessuna attività in sospeso.'
+            : hasTotalTasks
+              ? 'Nessun risultato trovato per questi filtri, mi spiace!'
+              : 'Non ci sono ancora attività. Creane una con il pulsante "Nuova attività".'}
         </p>
       </div>
     );
@@ -40,7 +51,7 @@ function List() {
             {state.label}
           </h2>
           <div className="flex flex-col gap-4">
-            {filteredTasks
+            {displayedTasks
               .filter((task) => task.status === state.value)
               .map((task) => (
                 <Card key={task.id} task={task} onEditTask={() => handleEditTask(task)} />

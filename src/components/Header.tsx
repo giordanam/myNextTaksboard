@@ -36,6 +36,16 @@ export default function Header() {
             >
               About
             </Link>
+            <Link
+              href="/user"
+              className={`font-medium transition-colors pb-1 ${
+                pathname === '/user'
+                  ? 'text-sky-600 border-b-2 border-sky-600'
+                  : 'text-gray-500 hover:text-gray-900'
+              }`}
+            >
+              Task personali
+            </Link>
           </nav>
         </div>
         <Button
