@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useFilters } from '@/contexts/FilterContext';
 import { CATEGORIES, USERS, EXPIRES } from '@/constants';
 import { IconCategory, IconFilters, IconLoading, IconSearch, IconTime, IconUser } from './Icons';
@@ -12,6 +13,8 @@ interface FilterBarProps {
 
 export default function FilterBar({ onClick, fetchStatus }: FilterBarProps) {
   const [isFiltersOpen, setFiltersOpen] = useState(false);
+  const path = usePathname();
+  const isUserPage = path === '/user';
   const {
     searchQuery,
     setSearchQuery,
@@ -44,14 +47,16 @@ export default function FilterBar({ onClick, fetchStatus }: FilterBarProps) {
         <Button className="justify-self-end ml-2" onClick={handleClearFilters}>
           Pulisci filtri
         </Button>
-        <Button
-          variant="danger"
-          onClick={onClick}
-          disabled={fetchStatus === 'loading'}
-          className="ml-5"
-        >
-          Scarica tasks
-        </Button>
+        {!isUserPage && (
+          <Button
+            variant="danger"
+            onClick={onClick}
+            disabled={fetchStatus === 'loading'}
+            className="ml-5"
+          >
+            Scarica tasks
+          </Button>
+        )}
         {fetchStatus === 'loading' && (
           <div className="flex items-center ml-4 text-indigo-600">
             <IconLoading className={'animate-spin h-6 w-6 mr-2'} />
@@ -69,10 +74,12 @@ export default function FilterBar({ onClick, fetchStatus }: FilterBarProps) {
             <IconTime className={'size-6'} />
             Scadenza
           </span>
-          <span className="mt-5 flex items-center gap-2 font-bold">
-            <IconUser className={'size-6'} />
-            Utente assegnato
-          </span>
+          {!isUserPage && (
+            <span className="mt-5 flex items-center gap-2 font-bold">
+              <IconUser className={'size-6'} />
+              Utente assegnato
+            </span>
+          )}
           <div className="col-span-4 border-y border-sky-600 py-4 grid grid-cols-4 gap-4">
             <select
               value={categoryFilter}
@@ -98,18 +105,20 @@ export default function FilterBar({ onClick, fetchStatus }: FilterBarProps) {
                 </option>
               ))}
             </select>
-            <select
-              value={userFilter}
-              onChange={(e) => setUserFilter(e.target.value)}
-              className="py-2 bg-white text-gray-900 focus:outline-none focus:border-sky-600 focus:ring-1 focus:ring-sky-600 rounded-xl"
-            >
-              <option value="">Seleziona utente...</option>
-              {USERS.map((user) => (
-                <option key={user.value} value={user.value}>
-                  {user.label}
-                </option>
-              ))}
-            </select>
+            {!isUserPage && (
+              <select
+                value={userFilter}
+                onChange={(e) => setUserFilter(e.target.value)}
+                className="py-2 bg-white text-gray-900 focus:outline-none focus:border-sky-600 focus:ring-1 focus:ring-sky-600 rounded-xl"
+              >
+                <option value="">Seleziona utente...</option>
+                {USERS.map((user) => (
+                  <option key={user.value} value={user.value}>
+                    {user.label}
+                  </option>
+                ))}
+              </select>
+            )}
           </div>
         </div>
       )}
