@@ -1,12 +1,14 @@
 // Server Component
 
 import List from '@/components/List';
+import { fetchTasks } from '@/services/tasksApi';
 
-export default function Page() {
+export default async function Page() {
+  const serverTasks = await fetchTasks();
   return (
     <div className="bg-gray-100 text-gray-800 p-6 min-h-screen">
       <div className="max-w-7xl mx-auto">
-        <List />
+        <List initialTasks={serverTasks} />
       </div>
     </div>
   );

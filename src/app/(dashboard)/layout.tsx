@@ -4,10 +4,10 @@ import FilterBar from '@/components/FilterBar';
 import { useTasks } from '@/contexts/TaskContext';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
-  const { handleDownloadClick, fetchStatus } = useTasks();
+  const { handleDownloadClick } = useTasks();
   return (
     <>
-      <FilterBar onClick={handleDownloadClick} fetchStatus={fetchStatus} />
+      <FilterBar onClick={handleDownloadClick} />
       <div className="mt-6">{children}</div>
     </>
   );

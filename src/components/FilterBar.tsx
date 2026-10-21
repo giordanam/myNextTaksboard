@@ -1,18 +1,17 @@
-import { useState } from 'react';
+import { useState, useTransition } from 'react';
 import { usePathname } from 'next/navigation';
 import { useFilters } from '@/contexts/FilterContext';
 import { CATEGORIES, USERS, EXPIRES } from '@/constants';
 import { IconCategory, IconFilters, IconLoading, IconSearch, IconTime, IconUser } from './Icons';
 import Button from './Button';
-import { FetchStatus } from './FetchStatusToast';
 
 interface FilterBarProps {
   onClick: () => void;
-  fetchStatus: FetchStatus;
 }
 
-export default function FilterBar({ onClick, fetchStatus }: FilterBarProps) {
+export default function FilterBar({ onClick }: FilterBarProps) {
   const [isFiltersOpen, setFiltersOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const path = usePathname();
   const isUserPage = path === '/user';
   const {
@@ -26,6 +25,12 @@ export default function FilterBar({ onClick, fetchStatus }: FilterBarProps) {
     setUserFilter,
     handleClearFilters,
   } = useFilters();
+
+  const handleDownloadClick = () => {
+    startTransition(async () => {
+      await onClick();
+    });
+  };
 
   return (
     <>
@@ -50,14 +55,14 @@ export default function FilterBar({ onClick, fetchStatus }: FilterBarProps) {
         {!isUserPage && (
           <Button
             variant="danger"
-            onClick={onClick}
-            disabled={fetchStatus === 'loading'}
+            onClick={handleDownloadClick}
+            disabled={isPending}
             className="ml-5"
           >
             Scarica tasks
           </Button>
         )}
-        {fetchStatus === 'loading' && (
+        {isPending && (
           <div className="flex items-center ml-4 text-indigo-600">
             <IconLoading className={'animate-spin h-6 w-6 mr-2'} />
           </div>

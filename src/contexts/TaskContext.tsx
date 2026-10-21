@@ -3,31 +3,33 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { Task } from '@/constants';
 import { fetchTasks } from '@/services/tasksApi';
-import { FetchStatus } from '@/components/FetchStatusToast';
+import { ToastStatus } from '../components/ToastStatus';
 
 interface TaskContextType {
   tasks: Task[];
   isModalOpen: boolean;
-  fetchStatus: FetchStatus;
   errorMessage: string;
   setIsModalOpen: (isOpen: boolean) => void;
-  setFetchStatus: (status: FetchStatus) => void;
   handleDownloadClick: () => Promise<void>;
   deleteTask: (id: string | number) => void;
   handleSaveForm: (taskData: Task) => Promise<Task> | Task;
+  toastMessage: ToastStatus;
+  setToastMessage: (status: ToastStatus) => void;
+  isMounted: boolean;
+  setTasks: (tasks: Task[]) => void;
+  deleteAllTasks: () => void;
 }
 
 export const TaskContext = createContext<TaskContextType | null>(null);
 
 interface TaskProviderProps {
   children: ReactNode;
-  initialTasks: Task[];
 }
 
-export function TaskProvider({ children, initialTasks }: TaskProviderProps) {
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+export function TaskProvider({ children }: TaskProviderProps) {
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [toastMessage, setToastMessage] = useState<ToastStatus>('idle');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [fetchStatus, setFetchStatus] = useState<FetchStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
   const [isMounted, setIsMounted] = useState(false);
 
@@ -66,19 +68,18 @@ export function TaskProvider({ children, initialTasks }: TaskProviderProps) {
   }, [tasks, isMounted]);
 
   const handleDownloadClick = async () => {
-    setFetchStatus('loading');
     try {
       const newTasks = await fetchTasks();
       setTasks((prevTasks) => [...prevTasks, ...newTasks]);
       setErrorMessage('');
-      setFetchStatus('success');
+      setToastMessage('success');
     } catch (error) {
+      setToastMessage('error');
       if (error instanceof Error) {
         setErrorMessage(error.message);
       } else {
         setErrorMessage('Errore sconosciuto');
       }
-      setFetchStatus('error');
     }
   };
 
@@ -98,6 +99,10 @@ export function TaskProvider({ children, initialTasks }: TaskProviderProps) {
     setTasks((prevTasks) =>
       prevTasks.map((task) => (task.id === updatedTask.id ? updatedTask : task))
     );
+  }
+
+  function deleteAllTasks() {
+    setTasks([]);
   }
 
   async function handleSaveForm(taskData: Task) {
@@ -120,13 +125,16 @@ export function TaskProvider({ children, initialTasks }: TaskProviderProps) {
       value={{
         tasks,
         isModalOpen,
-        fetchStatus,
         errorMessage,
         setIsModalOpen,
-        setFetchStatus,
         handleDownloadClick,
         deleteTask,
         handleSaveForm,
+        toastMessage,
+        setToastMessage,
+        isMounted,
+        setTasks,
+        deleteAllTasks,
       }}
     >
       {children}

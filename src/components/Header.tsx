@@ -4,16 +4,16 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation'; // <-- L'hook per capire dove siamo!
 import { useTasks } from '@/contexts/TaskContext';
 import Button from './Button';
-import { IconPlus } from './Icons';
+import { IconPlus, IconDelete } from './Icons';
 
 export default function Header() {
-  const { setIsModalOpen } = useTasks();
+  const { setIsModalOpen, deleteAllTasks } = useTasks();
   const pathname = usePathname();
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-10">
       <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-6">
           <h1 className="text-2xl font-bold text-gray-800">TaskBoard</h1>
           <nav className="flex gap-4">
             <Link
@@ -48,15 +48,27 @@ export default function Header() {
             </Link>
           </nav>
         </div>
-        <Button
-          onClick={() => {
-            setIsModalOpen(true);
-          }}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm"
-        >
-          <IconPlus className="size-5" />
-          Nuova attività
-        </Button>
+        <div>
+          <Button
+            variant="danger"
+            onClick={() => {
+              deleteAllTasks();
+            }}
+            className="mr-3 gap-3"
+          >
+            <IconDelete className="size-4" />
+            Elimina tutte le attività
+          </Button>
+          <Button
+            onClick={() => {
+              setIsModalOpen(true);
+            }}
+            className="gap-3"
+          >
+            <IconPlus className="size-4" />
+            Nuova attività
+          </Button>
+        </div>
       </div>
     </header>
   );

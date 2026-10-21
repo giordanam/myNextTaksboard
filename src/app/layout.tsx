@@ -1,7 +1,7 @@
 import './globals.css';
-import { fetchTasks } from '@/services/tasksApi';
 import { TaskProvider } from '@/contexts/TaskContext';
 import { FilterProvider } from '@/contexts/FilterContext';
+import { Suspense } from 'react';
 import Header from '@/components/Header';
 import GlobalModals from '@/components/GlobalModals';
 
@@ -17,18 +17,18 @@ export default async function RootLayout({
   children: React.ReactNode;
   modal: React.ReactNode;
 }) {
-  const initialTasks = await fetchTasks();
-
   return (
     <html lang="it">
       <body>
-        <TaskProvider initialTasks={initialTasks}>
+        <TaskProvider>
           <FilterProvider>
-            <Header />
+            <Suspense fallback={<header className="h-16 bg-white shadow-sm sticky top-0 z-10" />}>
+              <Header />
+            </Suspense>
             <GlobalModals />
             <main className="bg-gray-100 text-gray-800 min-h-screen">
               <div className="max-w-7xl mx-auto p-6">{children}</div>
-              {modal}
+              <Suspense fallback={null}>{modal}</Suspense>
             </main>
           </FilterProvider>
         </TaskProvider>

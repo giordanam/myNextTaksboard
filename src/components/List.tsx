@@ -6,15 +6,30 @@ import { useFilters } from '@/contexts/FilterContext';
 import { useTasks } from '@/contexts/TaskContext';
 import { getFilteredTasks } from '@/utils/filterUtils';
 import { IconPlus, IconSearch } from './Icons';
-import { memo } from 'react';
+import { memo, useEffect } from 'react';
+import { Task } from '@/constants';
 
 interface ListProps {
   isUserPage?: boolean;
+  initialTasks?: Task[];
 }
 
-function List({ isUserPage }: ListProps) {
+function List({ isUserPage, initialTasks = [] }: ListProps) {
   const filters = useFilters();
-  const { tasks } = useTasks();
+  const { tasks, setTasks, isMounted } = useTasks();
+
+  useEffect(() => {
+    if (isMounted) {
+      const savedTasks = localStorage.getItem('tasks');
+      // Se il localStorage è vuoto, salviamo nel Context i dati appena arrivati dal server!
+      if (!savedTasks || JSON.parse(savedTasks).length === 0) {
+        if (initialTasks.length > 0) {
+          setTasks(initialTasks);
+        }
+      }
+    }
+  }, [isMounted, initialTasks, setTasks]);
+
   const filteredTasks = getFilteredTasks(tasks, filters);
 
   const displayedTasks = isUserPage
@@ -44,7 +59,7 @@ function List({ isUserPage }: ListProps) {
   }
 
   return (
-    <div className="grid grid-cols-3 mt-5 gap-6">
+    <div className="grid grid-cols-3 gap-6">
       {STATUS.map((state) => (
         <div key={state.value} className="bg-gray-100 p-4 rounded-lg">
           <h2 className="font-bold mb-4 flex items-center gap-2">

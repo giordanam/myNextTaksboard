@@ -1,25 +1,20 @@
 import { useEffect, useState } from 'react';
 
-// Definiamo i 4 stati validi. Se scrivi qualcosa di diverso, TS ti blocca!
-export type FetchStatus = 'idle' | 'loading' | 'success' | 'error';
+export type ToastStatus = 'idle' | 'success' | 'error';
 
 // props
-interface FetchStatusToastProps {
-  fetchStatus: FetchStatus;
+interface ToastStatusProps {
+  toastStatus: ToastStatus;
   onDismiss: () => void;
   errorMessage?: string;
 }
 
-export default function FetchStatusToast({
-  fetchStatus,
-  onDismiss,
-  errorMessage,
-}: FetchStatusToastProps) {
+export default function ToastStatus({ toastStatus, onDismiss, errorMessage }: ToastStatusProps) {
   // Stato interno per gestire l'opacità e l'animazione di uscita
   const [isClosing, setIsClosing] = useState(false);
   //timer
   useEffect(() => {
-    if (fetchStatus === 'error' || fetchStatus === 'success') {
+    if (toastStatus === 'error' || toastStatus === 'success') {
       const fadeTimer = setTimeout(() => {
         setIsClosing(true);
       }, 3500);
@@ -35,7 +30,7 @@ export default function FetchStatusToast({
         clearTimeout(destroyTimer);
       };
     }
-  }, [fetchStatus, onDismiss]);
+  }, [toastStatus, onDismiss]);
 
   const handleManualClose = () => {
     setIsClosing(true);
@@ -44,10 +39,6 @@ export default function FetchStatusToast({
       setIsClosing(false);
     }, 500); // aspettiamo che la dissolvenza si completi prima di smontare il componente
   };
-
-  if (fetchStatus === 'idle' || fetchStatus === 'loading') {
-    return null;
-  }
 
   return (
     <div
@@ -66,7 +57,7 @@ export default function FetchStatusToast({
         ✕
       </button>
       {/* STATO: ERRORE */}
-      {fetchStatus === 'error' && (
+      {toastStatus === 'error' && (
         <div className="flex items-center p-6 bg-red-100 border-l-8 border-red-600 text-red-800 min-w-[300px]">
           <span className="text-2xl mr-4">❌</span>
           <div>
@@ -76,7 +67,7 @@ export default function FetchStatusToast({
         </div>
       )}
       {/* STATO: SUCCESSO */}
-      {fetchStatus === 'success' && (
+      {toastStatus === 'success' && (
         <div className="flex items-center p-6 bg-green-100 border-l-8 border-green-600 text-green-800 min-w-[300px]">
           <span className="text-2xl mr-4">✅</span>
           <div>

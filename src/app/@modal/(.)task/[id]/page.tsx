@@ -3,7 +3,7 @@
 import { useTasks } from '@/contexts/TaskContext';
 import { useRouter } from 'next/navigation';
 import DetailModal from '@/components/DetailModal';
-import { use, useEffect, useState } from 'react'; // <-- 1. IMPORTIAMO use DA REACT
+import { use, useEffect, useState } from 'react';
 
 export default function InterceptedTaskModal({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -36,9 +36,6 @@ export default function InterceptedTaskModal({ params }: { params: Promise<{ id:
         <div className="bg-white p-8 rounded shadow text-center">
           <h2 className="text-xl font-bold mb-2">Task non trovata</h2>
           <p className="mb-4">Potrebbe essere stata eliminata o non esiste.</p>
-          <button onClick={closeModal} className="bg-sky-500 text-white px-4 py-2 rounded">
-            Torna alla Bacheca
-          </button>
         </div>
       </div>
     );
