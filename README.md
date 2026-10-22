@@ -30,21 +30,22 @@ L'applicazione sarà disponibile all'indirizzo `http://localhost:3000`.
 
 Il progetto sfrutta le convenzioni di routing avanzate di Next.js, come i Route Groups `(dashboard)` per layout condivisi e le Parallel/Intercepting Routes `@modal/(.)task` per la gestione modale delle task.
 
+```
 src/
 ├── app/
 │ ├── (dashboard)/ # Route Group: Condivide il layout senza alterare l'URL
 │ │ ├── user/
-│ │ │ └── page.tsx # Pagina vista utente specifica
+│ │ │   └── page.tsx # Pagina vista utente specifica
 │ │ ├── error.tsx # Gestione errori nativa per l'area dashboard
 │ │ ├── layout.tsx # Layout condiviso (Header, Filtri)
 │ │ ├── page.tsx # Server Component: Fetching iniziale asincrono
 │ │ └── loading.tsx # UI Skeleton mostrato durante il fetch del server
 │ ├── @modal/ # Parallel Route: Renderizza il modale in parallelo
 │ │ ├── (.)task/[id]/ # Intercepting Route: Apre la task in modal sovrapponendosi
-│ │ │ └── page.tsx
+│ │ │   └── page.tsx
 │ │ └── default.tsx # Fallback (ritorna null quando il modale è chiuso)
 │ ├── task/[id]/ # Rotta Standard: Fallback se l'utente ricarica la pagina del modale
-│ │ └── page.tsx
+│ │     └── page.tsx
 │ ├── globals.css # Stili globali e direttive Tailwind CSS
 │ └── layout.tsx # Root Layout con i Provider globali (Context)
 ├── components/ # Client e Server Components (List, Card, FilterBar, ecc.)
@@ -52,6 +53,7 @@ src/
 ├── services/ # Chiamate API (tasksApi.ts)
 ├── utils/ # Funzioni di utilità (filterUtils, apiUtils, dateUtils)
 └── constants.tsx # Costanti globali e dati statici
+```
 
 ---
 
