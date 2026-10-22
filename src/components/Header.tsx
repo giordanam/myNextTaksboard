@@ -9,6 +9,7 @@ import { IconPlus, IconDelete } from './Icons';
 export default function Header() {
   const { setIsModalOpen, deleteAllTasks } = useTasks();
   const pathname = usePathname();
+  const isUserPage = pathname === '/user';
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-10">
@@ -49,16 +50,18 @@ export default function Header() {
           </nav>
         </div>
         <div>
-          <Button
-            variant="danger"
-            onClick={() => {
-              deleteAllTasks();
-            }}
-            className="mr-3 gap-3"
-          >
-            <IconDelete className="size-4" />
-            Elimina tutte le attività
-          </Button>
+          {!isUserPage && (
+            <Button
+              variant="danger"
+              onClick={() => {
+                deleteAllTasks();
+              }}
+              className="mr-3 gap-3"
+            >
+              <IconDelete className="size-4" />
+              Elimina tutte le attività
+            </Button>
+          )}
           <Button
             onClick={() => {
               setIsModalOpen(true);

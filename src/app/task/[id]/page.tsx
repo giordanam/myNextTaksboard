@@ -1,19 +1,19 @@
 'use client';
 
+import { Suspense, useEffect, useState } from 'react';
 import { useTasks } from '@/contexts/TaskContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import DetailModal from '@/components/DetailModal';
-import { use, useEffect, useState } from 'react';
 
-export default function PaginaVeraTask({ params }: { params: Promise<{ id: string }> }) {
+function TaskContent() {
   const router = useRouter();
+  const params = useParams();
   const { tasks, handleSaveForm, deleteTask } = useTasks();
 
   // aggiunto per il problema che all'inizio le tasks non erano ancora pronte
   //e si rompeva il routing
   const [isReady, setIsReady] = useState(false);
-  const unwrappedParams = use(params);
-  const taskId = unwrappedParams.id;
+  const taskId = params?.id as string;
   const task = tasks.find((t) => t.id === taskId);
   const goHome = () => router.push('/');
 
@@ -54,6 +54,17 @@ export default function PaginaVeraTask({ params }: { params: Promise<{ id: strin
           goHome();
         }}
       />
+    </div>
+  );
+}
+
+export default function RealTaskPage() {
+  return (
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-100">
+      {/* suspense che permette a Next.js di non bloccarsi sul prerendering */}
+      <Suspense fallback={<div className="animate-pulse"></div>}>
+        <TaskContent />
+      </Suspense>
     </div>
   );
 }

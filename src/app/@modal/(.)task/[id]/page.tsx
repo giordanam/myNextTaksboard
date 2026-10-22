@@ -1,21 +1,19 @@
 'use client';
 
 import { useTasks } from '@/contexts/TaskContext';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import DetailModal from '@/components/DetailModal';
 import { use, useEffect, useState } from 'react';
 
-export default function InterceptedTaskModal({ params }: { params: Promise<{ id: string }> }) {
+export default function InterceptedTaskModal() {
   const router = useRouter();
+  const params = useParams();
   const { tasks, handleSaveForm, deleteTask } = useTasks();
 
   // aggiunto per il problema che all'inizio le tasks non erano ancora pronte
   //e si rompeva il routing nella pagina reale
   const [isReady, setIsReady] = useState(false);
-
-  // unwrap della promise con use()
-  const unwrappedParams = use(params);
-  const taskId = unwrappedParams.id;
+  const taskId = params?.id as string;
   const task = tasks.find((t) => t.id === taskId);
   const closeModal = () => {
     router.back();
