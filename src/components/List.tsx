@@ -18,6 +18,7 @@ function List({ isUserPage, initialTasks = [] }: ListProps) {
   const filters = useFilters();
   const { tasks, setTasks, isMounted } = useTasks();
 
+  //primissimo salvataggio
   useEffect(() => {
     if (isMounted) {
       const savedTasks = localStorage.getItem('tasks');
