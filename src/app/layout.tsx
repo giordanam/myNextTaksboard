@@ -25,7 +25,9 @@ export default async function RootLayout({
             <Suspense fallback={<header className="h-16 bg-white shadow-sm sticky top-0 z-10" />}>
               <Header />
             </Suspense>
-            <GlobalModals />
+            <Suspense fallback={<header className="h-16 bg-white shadow-sm sticky top-0 z-10" />}>
+              <GlobalModals />
+            </Suspense>
             <main className="bg-gray-100 text-gray-800 min-h-screen">
               <div className="max-w-7xl mx-auto p-6">{children}</div>
               <Suspense fallback={null}>{modal}</Suspense>

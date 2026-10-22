@@ -65,7 +65,7 @@ export default function FilterBar({ onClick }: FilterBarProps) {
           )}
           {isPending && (
             <div className="flex items-center ml-4 text-sky-600 mx-auto md:mx-0">
-              <IconLoading className={'animate-spin h-6 w-6 mr-2'} />
+              <IconLoading className={'animate-spin h-6 w-6 ml-2'} />
             </div>
           )}
         </div>

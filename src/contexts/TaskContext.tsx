@@ -50,6 +50,8 @@ export function TaskProvider({ children }: TaskProviderProps) {
       } catch {}
     }
 
+    document.cookie = 'hasVisited=true; path=/; max-age=31536000';
+
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
     if (parsedTasks.length > 0) {

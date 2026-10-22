@@ -3,10 +3,12 @@
 import DetailModal from './DetailModal';
 import ToastStatus from './ToastStatus';
 import { useTasks } from '@/contexts/TaskContext';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export default function GlobalModals() {
   const router = useRouter();
+  const path = usePathname();
+  const isAboutPage = path === '/about';
   const {
     isModalOpen,
     toastMessage,
@@ -33,7 +35,7 @@ export default function GlobalModals() {
 
             setIsModalOpen(false);
 
-            if (newTask && newTask.id) {
+            if (isAboutPage && newTask && newTask.id) {
               router.push(`/task/${newTask.id}`);
             }
           }}
