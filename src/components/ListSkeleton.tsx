@@ -1,6 +1,6 @@
 export default function ListSkeleton() {
   return (
-    <div className="grid grid-cols-3 mt-5 gap-6">
+    <div className="grid grid-cols-3 mt-6 gap-6">
       {[1, 2, 3].map((colIndex) => (
         <div key={colIndex} className="bg-gray-100 p-4 rounded-lg">
           {/* Titolo della colonna */}

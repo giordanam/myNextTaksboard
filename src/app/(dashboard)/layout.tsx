@@ -8,7 +8,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   return (
     <>
       <FilterBar onClick={handleDownloadClick} />
-      <div className="mt-6">{children}</div>
+      <div>{children}</div>
     </>
   );
 }

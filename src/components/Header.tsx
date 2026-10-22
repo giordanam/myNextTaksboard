@@ -13,10 +13,10 @@ export default function Header() {
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-10">
-      <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-0">
+        <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 w-full md:w-auto">
           <h1 className="text-2xl font-bold text-gray-800">TaskBoard</h1>
-          <nav className="flex gap-4">
+          <nav className="flex flex-wrap justify-center gap-4">
             <Link
               href="/"
               className={`font-medium transition-colors pb-1 ${
@@ -49,7 +49,7 @@ export default function Header() {
             </Link>
           </nav>
         </div>
-        <div>
+        <div className="flex flex-col sm:flex-row w-full md:w-auto">
           {!isUserPage && (
             <Button
               variant="danger"
