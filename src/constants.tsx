@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { IconClock, IconComplete, IconDescriptionAndColumn } from './components/Icons'; // Verifica che il percorso sia corretto rispetto a dove hai salvato Icons.tsx!
 
 export interface Task {
-  id?: string | number;
+  id: string;
   title: string;
   category: string;
   user: string;

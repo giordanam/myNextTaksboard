@@ -18,6 +18,7 @@ interface TaskContextType {
   isMounted: boolean;
   setTasks: (tasks: Task[]) => void;
   deleteAllTasks: () => void;
+  updateTaskStatus: (id: string | number, newState: string) => void;
 }
 
 export const TaskContext = createContext<TaskContextType | null>(null);
@@ -107,6 +108,13 @@ export function TaskProvider({ children }: TaskProviderProps) {
     setTasks([]);
   }
 
+  //funzione per aggiornare solo lki stato di un task
+  function updateTaskStatus(id: string | number, newState: string) {
+    setTasks((prevTasks) =>
+      prevTasks.map((task) => (task.id === id ? { ...task, status: newState } : task))
+    );
+  }
+
   async function handleSaveForm(taskData: Task) {
     let savedTask: Task;
     const taskID = tasks.find((task) => task.id === taskData.id);
@@ -137,6 +145,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
         isMounted,
         setTasks,
         deleteAllTasks,
+        updateTaskStatus,
       }}
     >
       {children}

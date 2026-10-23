@@ -16,7 +16,7 @@ interface ListProps {
 
 function List({ isUserPage, initialTasks = [] }: ListProps) {
   const filters = useFilters();
-  const { tasks, setTasks, isMounted } = useTasks();
+  const { tasks, setTasks, isMounted, updateTaskStatus } = useTasks();
 
   //primissimo salvataggio
   useEffect(() => {
@@ -62,7 +62,17 @@ function List({ isUserPage, initialTasks = [] }: ListProps) {
   return (
     <div className="grid grid-cols-3 mt-6 gap-6">
       {STATUS.map((state) => (
-        <div key={state.value} className="bg-gray-100 p-4 rounded-lg">
+        <div
+          key={state.value}
+          className="bg-gray-100 p-4 rounded-lg"
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={(e) => {
+            const draggedTaskId = e.dataTransfer.getData('taskId');
+            if (draggedTaskId) {
+              updateTaskStatus(draggedTaskId, state.value);
+            }
+          }}
+        >
           <h2 className="font-bold mb-4 flex items-center gap-2">
             {state.icon}
             {state.label}

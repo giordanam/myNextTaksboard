@@ -13,7 +13,11 @@ export default function Card({ task }: CardProps) {
   return (
     <Link
       href={`/task/${task.id}`}
-      className="bg-white p-4 rounded-xl shadow cursor-pointer hover:shadow-md transition-shadow flex flex-col h-full"
+      className="bg-white p-4 rounded-xl shadow cursor-grab hover:shadow-md transition-shadow flex flex-col h-full"
+      draggable={true}
+      onDragStart={(e) => {
+        e.dataTransfer.setData('taskId', task.id);
+      }}
     >
       <div className="mb-2">
         <span className="inline-block px-2 py-1 font-bold text-sky-700 bg-sky-100 rounded text-s">
