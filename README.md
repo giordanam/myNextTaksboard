@@ -52,7 +52,8 @@ src/
 ├── contexts/ # Gestione dello stato globale (TaskContext, FilterContext)
 ├── services/ # Chiamate API (tasksApi.ts)
 ├── utils/ # Funzioni di utilità (filterUtils, apiUtils, dateUtils)
-└── constants.tsx # Costanti globali e dati statici
+├── constants.tsx # Costanti globali e dati statici
+└── middleware.ts # Protezione delle rotte private e controllo accessi
 ```
 
 ---
