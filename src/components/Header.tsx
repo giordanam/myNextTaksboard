@@ -1,15 +1,26 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation'; // <-- L'hook per capire dove siamo!
+import { usePathname, useRouter } from 'next/navigation'; // <-- L'hook per capire dove siamo!
 import { useTasks } from '@/contexts/TaskContext';
 import Button from './Button';
-import { IconPlus, IconDelete } from './Icons';
+import { IconPlus, IconDelete, IconLogout } from './Icons';
 
 export default function Header() {
   const { setIsModalOpen, deleteAllTasks } = useTasks();
   const pathname = usePathname();
   const isUserPage = pathname === '/user';
+  const router = useRouter();
+
+  if (pathname === '/login') {
+    return null;
+  }
+
+  const handleLogout = () => {
+    document.cookie = 'isAuthenticated=false; path=/; max-age=0';
+    document.cookie = 'userName=; path=/; max-age=0';
+    router.push('/login');
+  };
 
   return (
     <header className="bg-white shadow-sm sticky top-0 z-10">
@@ -70,6 +81,10 @@ export default function Header() {
           >
             <IconPlus className="size-4" />
             Nuova attività
+          </Button>
+          <Button variant="ghost" onClick={handleLogout} className="ml-3 gap-3">
+            <IconLogout className="size-4" />
+            Logout
           </Button>
         </div>
       </div>
