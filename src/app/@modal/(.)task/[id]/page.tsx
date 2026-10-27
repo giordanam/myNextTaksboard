@@ -3,7 +3,7 @@
 import { useTasks } from '@/contexts/TaskContext';
 import { useRouter, useParams } from 'next/navigation';
 import DetailModal from '@/components/DetailModal';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function InterceptedTaskModal() {
   const router = useRouter();
