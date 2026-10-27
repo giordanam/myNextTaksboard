@@ -58,18 +58,6 @@ export default function Header({ buttons }: { buttons?: React.ReactNode }) {
         </div>
         <div className="flex flex-col sm:flex-row w-full md:w-auto">
           {buttons}
-          {!isUserPage && (
-            <Button
-              variant="danger"
-              onClick={() => {
-                deleteAllTasks();
-              }}
-              className="mr-3 gap-3"
-            >
-              <IconDelete className="size-4" />
-              Elimina tutte le attività
-            </Button>
-          )}
           <Button
             onClick={() => {
               setIsModalOpen(true);
