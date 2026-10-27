@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 // ogni volta che viene digitato un indirizzo o si cambia pagima, parte una request (che contiene URL, IP e cookie)
 // il middleware intercetta queste richieste e può decidere se permetterle o meno
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   // controlliamo se l'utente ha il cookie "isAuthenticated" (ha già fatto login)
   const hasToken = request.cookies.has('isAuthenticated');
   // vediamo dove vuole andare
