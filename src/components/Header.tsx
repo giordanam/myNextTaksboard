@@ -6,7 +6,7 @@ import { useTasks } from '@/contexts/TaskContext';
 import Button from './Button';
 import { IconPlus, IconDelete, IconLogout } from './Icons';
 
-export default function Header() {
+export default function Header({ buttons }: { buttons?: React.ReactNode }) {
   const { setIsModalOpen, deleteAllTasks } = useTasks();
   const pathname = usePathname();
   const isUserPage = pathname === '/user';
@@ -57,6 +57,7 @@ export default function Header() {
           </nav>
         </div>
         <div className="flex flex-col sm:flex-row w-full md:w-auto">
+          {buttons}
           {!isUserPage && (
             <Button
               variant="danger"

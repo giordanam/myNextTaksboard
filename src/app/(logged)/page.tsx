@@ -1,9 +1,8 @@
 // Server Component
-
-import List from '@/components/List';
 import { fetchTasks } from '@/services/tasksApi';
 import { Task } from '@/constants';
 import { cookies } from 'next/headers';
+import Dashboard from "@/components/Dashboard";
 
 export default async function Page() {
   //lettura del cookie
@@ -16,10 +15,6 @@ export default async function Page() {
   }
 
   return (
-    <div className="bg-gray-100 text-gray-800 min-h-screen">
-      <div className="max-w-7xl mx-auto">
-        <List initialTasks={initialTasks} />
-      </div>
-    </div>
+    <Dashboard initialTasks={initialTasks}></Dashboard>
   );
 }
