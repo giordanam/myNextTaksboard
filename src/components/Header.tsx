@@ -12,10 +12,6 @@ export default function Header() {
   const isUserPage = pathname === '/user';
   const router = useRouter();
 
-  if (pathname === '/login') {
-    return null;
-  }
-
   const handleLogout = () => {
     document.cookie = 'isAuthenticated=false; path=/; max-age=0';
     document.cookie = 'userName=; path=/; max-age=0';

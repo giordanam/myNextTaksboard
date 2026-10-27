@@ -1,17 +1,17 @@
+'use client';
+
 import { useState, useTransition } from 'react';
 import { usePathname } from 'next/navigation';
 import { useFilters } from '@/contexts/FilterContext';
 import { CATEGORIES, USERS, EXPIRES } from '@/constants';
 import { IconCategory, IconFilters, IconLoading, IconSearch, IconTime, IconUser } from './Icons';
 import Button from './Button';
+import { useTasks } from '@/contexts/TaskContext';
 
-interface FilterBarProps {
-  onClick: () => void;
-}
-
-export default function FilterBar({ onClick }: FilterBarProps) {
+export default function FilterBar() {
   const [isFiltersOpen, setFiltersOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [isPending] = useTransition();
+  const { handleDownloadClick } = useTasks();
   const path = usePathname();
   const isUserPage = path === '/user';
   const {
@@ -25,12 +25,6 @@ export default function FilterBar({ onClick }: FilterBarProps) {
     setUserFilter,
     handleClearFilters,
   } = useFilters();
-
-  const handleDownloadClick = () => {
-    startTransition(async () => {
-      await onClick();
-    });
-  };
 
   return (
     <>

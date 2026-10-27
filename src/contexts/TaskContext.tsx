@@ -72,6 +72,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
 
   const handleDownloadClick = async () => {
     try {
+      console.log('ciao');
       const newTasks = await fetchTasks();
       setTasks((prevTasks) => [...prevTasks, ...newTasks]);
       setErrorMessage('');
