@@ -4,19 +4,25 @@ import Link from 'next/link';
 
 interface CardProps {
   task: Task;
+  onDragStartAction?: () => void;
+  onDragEndAction?: () => void;
 }
 
-export default function Card({ task }: CardProps) {
+export default function Card({ task, onDragStartAction, onDragEndAction }: CardProps) {
   const category = CATEGORIES.find((category) => task.category === category.value);
   const user = USERS.find((user) => task.user === user.value);
 
   return (
     <Link
       href={`/task/${task.id}`}
-      className="bg-white p-4 rounded-xl shadow cursor-grab hover:shadow-md transition-shadow flex flex-col h-full"
+      className="bg-white p-4 rounded-xl shadow cursor-pointer hover:shadow-md transition-shadow flex flex-col h-full"
       draggable={true}
       onDragStart={(e) => {
         e.dataTransfer.setData('taskId', task.id);
+        if (onDragStartAction) onDragStartAction();
+      }}
+      onDragEnd={() => {
+        if (onDragEndAction) onDragEndAction();
       }}
     >
       <div className="mb-2">

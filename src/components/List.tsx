@@ -6,7 +6,7 @@ import { useFilters } from '@/contexts/FilterContext';
 import { useTasks } from '@/contexts/TaskContext';
 import { getFilteredTasks } from '@/utils/filterUtils';
 import { IconPlus, IconSearch } from './Icons';
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Task } from '@/constants';
 
 interface ListProps {
@@ -17,6 +17,7 @@ interface ListProps {
 function List({ isUserPage, initialTasks = [] }: ListProps) {
   const filters = useFilters();
   const { tasks, setTasks, isMounted, updateTaskStatus } = useTasks();
+  const [draggedFromStatus, setDraggedFromStatus] = useState<string | null>(null);
 
   //primissimo salvataggio
   useEffect(() => {
@@ -61,31 +62,47 @@ function List({ isUserPage, initialTasks = [] }: ListProps) {
 
   return (
     <div className="grid grid-cols-3 mt-6 gap-6">
-      {STATUS.map((state) => (
-        <div
-          key={state.value}
-          className="bg-gray-100 p-4 rounded-lg"
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={(e) => {
-            const draggedTaskId = e.dataTransfer.getData('taskId');
-            if (draggedTaskId) {
-              updateTaskStatus(draggedTaskId, state.value);
-            }
-          }}
-        >
-          <h2 className="font-bold mb-4 flex items-center gap-2">
-            {state.icon}
-            {state.label}
-          </h2>
-          <div className="flex flex-col gap-4">
-            {displayedTasks
-              .filter((task) => task.status === state.value)
-              .map((task) => (
-                <Card key={task.id} task={task} />
-              ))}
+      {STATUS.map((state) => {
+        //calcoliamo se questa colonna deve essere evidenziata come target del drag
+        const isHighlightTarget = draggedFromStatus !== null && draggedFromStatus !== state.value;
+
+        return (
+          <div
+            key={state.value}
+            className={`p-4 rounded-lg transition-all border-2 ${
+              isHighlightTarget
+                ? 'bg-sky-50 border-dashed border-sky-400'
+                : 'bg-gray-100 border-transparent'
+            }`}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={(e) => {
+              e.preventDefault();
+              setDraggedFromStatus(null);
+              const draggedTaskId = e.dataTransfer.getData('taskId');
+              if (draggedTaskId) {
+                updateTaskStatus(draggedTaskId, state.value);
+              }
+            }}
+          >
+            <h2 className="font-bold mb-4 flex items-center gap-2">
+              {state.icon}
+              {state.label}
+            </h2>
+            <div className="flex flex-col gap-4">
+              {displayedTasks
+                .filter((task) => task.status === state.value)
+                .map((task) => (
+                  <Card
+                    key={task.id}
+                    task={task}
+                    onDragStartAction={() => setDraggedFromStatus(task.status)}
+                    onDragEndAction={() => setDraggedFromStatus(null)}
+                  />
+                ))}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
