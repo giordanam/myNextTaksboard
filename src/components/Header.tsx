@@ -4,10 +4,10 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation'; // <-- L'hook per capire dove siamo!
 import { useTasks } from '@/contexts/TaskContext';
 import Button from './Button';
-import { IconPlus, IconDelete, IconLogout } from './Icons';
+import { IconPlus, IconLogout } from './Icons';
 
 export default function Header({ buttons }: { buttons?: React.ReactNode }) {
-  const { setIsModalOpen, deleteAllTasks } = useTasks();
+  const { setIsModalOpen } = useTasks();
   const pathname = usePathname();
   const router = useRouter();
 
