@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, Suspense, ReactNode } from 'react';
+import { createContext, useContext, Suspense, ReactNode, useEffect, useState } from 'react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 // Definiamo la "forma" di tutto ciò che questo contesto metterà a disposizione
@@ -28,11 +28,15 @@ function FilterProviderInner({ children }: FilterProviderProps) {
   const router = useRouter();
   const pathName = usePathname();
   const searchParams = useSearchParams();
-
-  const searchQuery = searchParams.get('q') || '';
+  const initialQuery = searchParams.get('q') || '';
+  const [searchQuery, setSearchQuery] = useState(initialQuery);
   const categoryFilter = searchParams.get('categoryFilter') || '';
   const expireFilter = searchParams.get('expireFilter') || '';
   const userFilter = searchParams.get('userFilter') || '';
+
+  useEffect(() => {
+    setSearchQuery(searchParams.get('q') || '');
+  }, [searchParams]);
 
   const updateUrlParams = (key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -41,16 +45,32 @@ function FilterProviderInner({ children }: FilterProviderProps) {
     } else {
       params.delete(key);
     }
-    router.push(`${pathName}?${params.toString()}`);
+
+    const queryString = params.toString();
+    const newUrl = queryString ? `${pathName}?${queryString}` : pathName;
+
+    router.replace(newUrl, { scroll: false });
   };
 
-  const setSearchQuery = (value: string) => updateUrlParams('q', value);
+  //debounce with useEffect
+  useEffect(() => {
+    const currentUrlQuery = searchParams.get('q') || '';
+    if (searchQuery === currentUrlQuery) return;
+
+    const timer = setTimeout(() => {
+      updateUrlParams('q', searchQuery);
+    }, 500);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
+
   const setCategoryFilter = (value: string) => updateUrlParams('categoryFilter', value);
   const setExpireFilter = (value: string) => updateUrlParams('expireFilter', value);
   const setUserFilter = (value: string) => updateUrlParams('userFilter', value);
 
   function handleClearFilters() {
-    router.replace(pathName);
+    router.replace(pathName, { scroll: false });
   }
 
   return (
