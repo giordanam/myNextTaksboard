@@ -6,16 +6,14 @@ import type { NextRequest } from 'next/server';
 export function proxy(request: NextRequest) {
   // controlliamo se l'utente ha il cookie "isAuthenticated" (ha già fatto login)
   const hasToken = request.cookies.has('isAuthenticated');
-  // vediamo dove vuole andare
-  const isGoingToHome = request.nextUrl.pathname === '/';
+  const isGoingToLogin = request.nextUrl.pathname === '/login';
 
-  // se cerca di entrare in bacheca (/) ma non è autenticato
-  if (isGoingToHome && !hasToken) {
-    // redirect alla pagina di login
+  if (!hasToken && !isGoingToLogin) {
     return NextResponse.redirect(new URL('/login', request.url));
+  } else if (hasToken && isGoingToLogin) {
+    return NextResponse.redirect(new URL('/', request.url));
   }
 
-  // in tutti gli altri casi l'utente può proseguire normalmente
   return NextResponse.next();
 }
 
