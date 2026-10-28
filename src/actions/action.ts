@@ -22,7 +22,7 @@ export async function loginAction(_prevState: LoginState, formData: FormData): P
 
   if (email === 'admin@test.com' && password === 'password123') {
     const cookieStore = await cookies();
-    cookieStore.set('userName', 'Admin', { path: '/', maxAge: 86400 });
+    cookieStore.set('userName', 'giordana', { path: '/', maxAge: 86400 });
     cookieStore.set('isAuthenticated', 'true', { path: '/', maxAge: 86400 });
   } else {
     // errore: credenziali sbagliate

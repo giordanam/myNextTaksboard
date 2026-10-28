@@ -12,9 +12,10 @@ import { Task } from '@/constants';
 interface ListProps {
   isUserPage?: boolean;
   initialTasks?: Task[];
+  userName?: string;
 }
 
-function List({ isUserPage, initialTasks = [] }: ListProps) {
+function List({ isUserPage, initialTasks = [], userName }: ListProps) {
   const filters = useFilters();
   const { tasks, setTasks, isMounted, updateTaskStatus } = useTasks();
   const [draggedFromStatus, setDraggedFromStatus] = useState<string | null>(null);
@@ -35,7 +36,7 @@ function List({ isUserPage, initialTasks = [] }: ListProps) {
   const filteredTasks = getFilteredTasks(tasks, filters);
 
   const displayedTasks = isUserPage
-    ? filteredTasks.filter((task) => task.user === 'giordana')
+    ? filteredTasks.filter((task) => task.user === userName)
     : filteredTasks;
 
   const hasDisplayedTasks = displayedTasks.length > 0;
@@ -51,7 +52,7 @@ function List({ isUserPage, initialTasks = [] }: ListProps) {
         )}
         <p className="font-bold text-gray-700">
           {isUserPage
-            ? 'Ottimo lavoro Giordana! Non hai nessuna attività in sospeso.'
+            ? `Ottimo lavoro ${userName}! Non hai nessuna attività in sospeso.`
             : hasTotalTasks
               ? 'Nessun risultato trovato per questi filtri, mi spiace!'
               : 'Non ci sono ancora attività. Creane una con il pulsante "Nuova attività".'}

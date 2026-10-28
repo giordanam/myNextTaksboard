@@ -1,5 +1,9 @@
-import Dashboard from "@/components/Dashboard";
+import Dashboard from '@/components/Dashboard';
+import { cookies } from 'next/headers';
 
-export default function UserPage() {
-  return (<Dashboard isUserPage={true}></Dashboard>);
+export default async function UserPage() {
+  const cookieStore = await cookies();
+  const userName = cookieStore.get('userName')?.value;
+
+  return <Dashboard isUserPage={true} userName={userName}></Dashboard>;
 }
