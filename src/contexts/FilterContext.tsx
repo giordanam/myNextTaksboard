@@ -35,6 +35,7 @@ function FilterProviderInner({ children }: FilterProviderProps) {
   const userFilter = searchParams.get('userFilter') || '';
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setSearchQuery(searchParams.get('q') || '');
   }, [searchParams]);
 
