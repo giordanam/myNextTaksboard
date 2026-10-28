@@ -9,7 +9,6 @@ import { IconPlus, IconDelete, IconLogout } from './Icons';
 export default function Header({ buttons }: { buttons?: React.ReactNode }) {
   const { setIsModalOpen, deleteAllTasks } = useTasks();
   const pathname = usePathname();
-  const isUserPage = pathname === '/user';
   const router = useRouter();
 
   const handleLogout = () => {
