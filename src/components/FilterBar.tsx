@@ -13,7 +13,7 @@ interface FilterBarProps {
 
 export default function FilterBar({ isUserPage }: FilterBarProps) {
   const [isFiltersOpen, setFiltersOpen] = useState(false);
-  const [isPending] = useTransition();
+  const [isPending, startTransition] = useTransition();
   const { handleDownloadClick } = useTasks();
   const {
     searchQuery,
@@ -51,7 +51,11 @@ export default function FilterBar({ isUserPage }: FilterBarProps) {
           {!isUserPage && (
             <Button
               variant="danger"
-              onClick={handleDownloadClick}
+              onClick={() =>
+                startTransition(async () => {
+                  await handleDownloadClick();
+                })
+              }
               disabled={isPending}
               className="ml-2"
             >
