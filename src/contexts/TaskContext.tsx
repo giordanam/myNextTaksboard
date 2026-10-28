@@ -17,7 +17,6 @@ interface TaskContextType {
   setToastMessage: (status: ToastStatus) => void;
   isMounted: boolean;
   setTasks: (tasks: Task[]) => void;
-  deleteAllTasks: () => void;
   updateTaskStatus: (id: string | number, newState: string) => void;
 }
 
@@ -103,10 +102,6 @@ export function TaskProvider({ children }: TaskProviderProps) {
     );
   }
 
-  function deleteAllTasks() {
-    setTasks([]);
-  }
-
   //funzione per aggiornare solo lki stato di un task
   function updateTaskStatus(id: string | number, newState: string) {
     setTasks((prevTasks) =>
@@ -143,7 +138,6 @@ export function TaskProvider({ children }: TaskProviderProps) {
         setToastMessage,
         isMounted,
         setTasks,
-        deleteAllTasks,
         updateTaskStatus,
       }}
     >
