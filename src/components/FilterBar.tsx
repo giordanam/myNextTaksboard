@@ -1,19 +1,20 @@
 'use client';
 
 import { useState, useTransition } from 'react';
-import { usePathname } from 'next/navigation';
 import { useFilters } from '@/contexts/FilterContext';
 import { CATEGORIES, USERS, EXPIRES } from '@/constants';
 import { IconCategory, IconFilters, IconLoading, IconSearch, IconTime, IconUser } from './Icons';
 import Button from './Button';
 import { useTasks } from '@/contexts/TaskContext';
 
-export default function FilterBar() {
+interface FilterBarProps {
+  isUserPage?: boolean;
+}
+
+export default function FilterBar({ isUserPage }: FilterBarProps) {
   const [isFiltersOpen, setFiltersOpen] = useState(false);
   const [isPending] = useTransition();
   const { handleDownloadClick } = useTasks();
-  const path = usePathname();
-  const isUserPage = path === '/user';
   const {
     searchQuery,
     setSearchQuery,
