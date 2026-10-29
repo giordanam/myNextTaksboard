@@ -20,7 +20,9 @@ function List({ isUserPage, initialTasks = [], userName }: ListProps) {
   const { tasks, updateTaskStatus } = useTasks();
   const [draggedFromStatus, setDraggedFromStatus] = useState<string | null>(null);
 
-  const filteredTasks = getFilteredTasks(tasks, filters);
+  const currentTasks = tasks.length > 0 ? tasks : initialTasks;
+
+  const filteredTasks = getFilteredTasks(currentTasks, filters);
 
   const displayedTasks = isUserPage
     ? filteredTasks.filter((task) => task.userId === userName)
