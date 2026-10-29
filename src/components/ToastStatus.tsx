@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export type ToastStatus = 'idle' | 'success' | 'error';
+export type ToastStatus = 'idle' | 'success_del' | 'success_edit' | 'success_add' | 'error';
 
 // props
 interface ToastStatusProps {
@@ -14,7 +14,12 @@ export default function ToastStatus({ toastStatus, onDismiss, errorMessage }: To
   const [isClosing, setIsClosing] = useState(false);
   //timer
   useEffect(() => {
-    if (toastStatus === 'error' || toastStatus === 'success') {
+    if (
+      toastStatus === 'error' ||
+      toastStatus === 'success_del' ||
+      toastStatus === 'success_edit' ||
+      toastStatus === 'success_add'
+    ) {
       const fadeTimer = setTimeout(() => {
         setIsClosing(true);
       }, 3500);
@@ -67,12 +72,27 @@ export default function ToastStatus({ toastStatus, onDismiss, errorMessage }: To
         </div>
       )}
       {/* STATO: SUCCESSO */}
-      {toastStatus === 'success' && (
+      {toastStatus === 'success_del' && (
         <div className="flex items-center p-6 bg-green-100 border-l-8 border-green-600 text-green-800 min-w-[300px]">
-          <span className="text-2xl mr-4">✅</span>
           <div>
-            <h3 className="font-bold text-lg">Evvai!</h3>
-            <p>Le nuove task sono state importate.</p>
+            <h3 className="font-bold text-lg">Task eliminata!</h3>
+            <p>La task è stata eliminata con successo.</p>
+          </div>
+        </div>
+      )}
+      {toastStatus === 'success_edit' && (
+        <div className="flex items-center p-6 bg-green-100 border-l-8 border-green-600 text-green-800 min-w-[300px]">
+          <div>
+            <h3 className="font-bold text-lg">Task modificata!</h3>
+            <p>Le modifiche alla task sono state salvate con successo.</p>
+          </div>
+        </div>
+      )}
+      {toastStatus === 'success_add' && (
+        <div className="flex items-center p-6 bg-green-100 border-l-8 border-green-600 text-green-800 min-w-[300px]">
+          <div>
+            <h3 className="font-bold text-lg">Task aggiunta!</h3>
+            <p>La nuova task è stata aggiunta con successo.</p>
           </div>
         </div>
       )}

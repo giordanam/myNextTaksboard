@@ -77,6 +77,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
   function deleteTask(id: string | number) {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
     setIsModalOpen(false);
+    setToastMessage('success_del');
 
     deleteTaskFromDb(id).catch((error) => {
       console.error(error);
@@ -121,8 +122,10 @@ export function TaskProvider({ children }: TaskProviderProps) {
 
       if (taskID) {
         editTask(savedTask);
+        setToastMessage('success_edit');
       } else {
         addTask(savedTask);
+        setToastMessage('success_add');
       }
     } catch (error) {
       console.error('Errore durante il salvataggio nel database', error);
