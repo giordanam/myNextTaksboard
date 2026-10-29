@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useTransition } from 'react';
+import { useState } from 'react';
 import { useFilters } from '@/contexts/FilterContext';
 import { CATEGORIES, USERS, EXPIRES } from '@/constants';
-import { IconCategory, IconFilters, IconLoading, IconSearch, IconTime, IconUser } from './Icons';
+import { IconCategory, IconFilters, IconSearch, IconTime, IconUser } from './Icons';
 import Button from './Button';
 
 interface FilterBarProps {
