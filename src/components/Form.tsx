@@ -71,7 +71,7 @@ export default function Form({ onClose, task, onSave, onDelete }: FormProps) {
                 </h3>
                 <textarea
                   name="description"
-                  defaultValue={task ? task.description : ''}
+                  defaultValue={task?.description ?? ''}
                   className="w-full p-3 h-32 bg-gray-50 resize-none border rounded-lg focus:outline-none focus:border-sky-600 focus:ring-1 focus:ring-sky-600"
                   placeholder="Aggiungi una descrizione..."
                 ></textarea>
@@ -101,8 +101,8 @@ export default function Form({ onClose, task, onSave, onDelete }: FormProps) {
 
                 <FormSelect
                   label="Assegnato a"
-                  name="user"
-                  defaultValue={task ? task.user : 'giordana'}
+                  name="userId"
+                  defaultValue={task ? task.userId : 'giordana'}
                   options={USERS}
                 />
               </div>

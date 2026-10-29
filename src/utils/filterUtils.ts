@@ -16,7 +16,7 @@ export function getFilteredTasks(tasks: Task[], filters: FilterOptions): Task[] 
   return tasks.filter((task) => {
     const matchTitle = task.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchCategory = categoryFilter === '' || task.category === categoryFilter;
-    const matchUser = userFilter === '' || task.user === userFilter;
+    const matchUser = userFilter === '' || task.userId === userFilter;
     const today = getLocalDateString();
 
     const matchExpire =

@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { prisma } from '@/lib/prisma';
 
 export type LoginState = {
   error: string;
@@ -9,24 +10,42 @@ export type LoginState = {
 
 //server action
 export async function loginAction(_prevState: LoginState, formData: FormData): Promise<LoginState> {
-  const email = formData.get('email')?.toString() || '';
+  const username = formData.get('username')?.toString() || '';
   const password = formData.get('password')?.toString() || '';
 
-  if (!email || !password) {
-    return { error: 'Email e password sono obbligatorie.' };
+  if (!username || !password) {
+    return { error: 'Nome utente e password sono obbligatorie.' };
   }
 
   if (password.length < 6) {
     return { error: 'La password deve contenere almeno 6 caratteri.' };
   }
 
-  if (email === 'admin@test.com' && password === 'password123') {
+  const user = await prisma.user.findUnique({
+    where: {
+      username: username.toLowerCase(),
+    },
+  });
+
+  if (user && password === user.password) {
     const cookieStore = await cookies();
-    cookieStore.set('userName', 'giordana', { path: '/', maxAge: 86400 });
-    cookieStore.set('isAuthenticated', 'true', { path: '/', maxAge: 86400 });
+
+    cookieStore.set('userName', user.username, {
+      path: '/',
+      maxAge: 86400,
+      httpOnly: true, // cookie non leggibile via js
+      secure: process.env.NODE_ENV === 'production', // in locale su http è false, online con https è true
+    });
+
+    cookieStore.set('isAuthenticated', 'true', {
+      path: '/',
+      maxAge: 86400,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+    });
   } else {
     // errore: credenziali sbagliate
-    return { error: 'Email o password non valide. Prova admin@test.com / password123' };
+    return { error: 'Nome utente o password non validi.' };
   }
   redirect('/');
 }

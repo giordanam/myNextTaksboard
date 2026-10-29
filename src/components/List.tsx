@@ -20,23 +20,10 @@ function List({ isUserPage, initialTasks = [], userName }: ListProps) {
   const { tasks, setTasks, isMounted, updateTaskStatus } = useTasks();
   const [draggedFromStatus, setDraggedFromStatus] = useState<string | null>(null);
 
-  //primissimo salvataggio
-  useEffect(() => {
-    if (isMounted) {
-      const savedTasks = localStorage.getItem('tasks');
-      // Se il localStorage è vuoto, salviamo nel Context i dati appena arrivati dal server!
-      if (!savedTasks || JSON.parse(savedTasks).length === 0) {
-        if (initialTasks.length > 0) {
-          setTasks(initialTasks);
-        }
-      }
-    }
-  }, [isMounted, initialTasks, setTasks]);
-
   const filteredTasks = getFilteredTasks(tasks, filters);
 
   const displayedTasks = isUserPage
-    ? filteredTasks.filter((task) => task.user === userName)
+    ? filteredTasks.filter((task) => task.userId === userName)
     : filteredTasks;
 
   const hasDisplayedTasks = displayedTasks.length > 0;

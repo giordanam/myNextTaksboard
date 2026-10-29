@@ -10,7 +10,7 @@ interface CardProps {
 
 export default function Card({ task, onDragStartAction, onDragEndAction }: CardProps) {
   const category = CATEGORIES.find((category) => task.category === category.value);
-  const user = USERS.find((user) => task.user === user.value);
+  const user = USERS.find((user) => task.userId === user.value);
 
   return (
     <Link

@@ -5,7 +5,7 @@ export interface Task {
   id: string;
   title: string;
   category: string;
-  user: string;
+  userId: string;
   expire: string;
   status: string;
   description?: string | null;

@@ -7,19 +7,26 @@ datasource db {
   provider = "sqlite"
 }
 
+model User {
+  id       String @id @default(uuid()) // ID univoco per ogni utente
+  username String @unique              // Il nome non può avere doppioni
+  password String                      
+  
+  tasks    Task[]                      // Relazione: un utente può avere molteplici task
+}
+
 model Task {
   id          String          @id @default(cuid())
   title       String
   category    String
-  user        String
   expire      String
   status      String
-  description String?         
+  description String?
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   checklist   ChecklistItem[] 
-  
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
 }
 
 model ChecklistItem {
