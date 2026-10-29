@@ -6,7 +6,7 @@ import { useFilters } from '@/contexts/FilterContext';
 import { useTasks } from '@/contexts/TaskContext';
 import { getFilteredTasks } from '@/utils/filterUtils';
 import { IconPlus, IconSearch } from './Icons';
-import { memo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Task } from '@/constants';
 
 interface ListProps {
@@ -108,4 +108,4 @@ function List({ isUserPage, initialTasks = [], userName }: ListProps) {
   );
 }
 
-export default memo(List);
+export default List;
