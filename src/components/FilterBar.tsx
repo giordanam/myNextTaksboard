@@ -5,7 +5,6 @@ import { useFilters } from '@/contexts/FilterContext';
 import { CATEGORIES, USERS, EXPIRES } from '@/constants';
 import { IconCategory, IconFilters, IconLoading, IconSearch, IconTime, IconUser } from './Icons';
 import Button from './Button';
-import { useTasks } from '@/contexts/TaskContext';
 
 interface FilterBarProps {
   isUserPage?: boolean;
@@ -13,8 +12,6 @@ interface FilterBarProps {
 
 export default function FilterBar({ isUserPage }: FilterBarProps) {
   const [isFiltersOpen, setFiltersOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
-  const { handleDownloadClick } = useTasks();
   const {
     searchQuery,
     setSearchQuery,
@@ -48,25 +45,6 @@ export default function FilterBar({ isUserPage }: FilterBarProps) {
           <Button className="justify-self-end ml-2" onClick={handleClearFilters}>
             Pulisci filtri
           </Button>
-          {!isUserPage && (
-            <Button
-              variant="danger"
-              onClick={() =>
-                startTransition(async () => {
-                  await handleDownloadClick();
-                })
-              }
-              disabled={isPending}
-              className="ml-2"
-            >
-              Scarica tasks
-            </Button>
-          )}
-          {isPending && (
-            <div className="flex items-center ml-4 text-sky-600 mx-auto md:mx-0">
-              <IconLoading className={'animate-spin h-6 w-6 ml-2'} />
-            </div>
-          )}
         </div>
       </div>
 

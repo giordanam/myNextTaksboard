@@ -1,8 +1,14 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import {
+  fetchTasks,
+  saveTaskToDb,
+  deleteTaskFromDb,
+  updateTaskStatusInDb,
+  deleteAllTasksFromDb,
+} from '@/services/tasksApi';
 import { Task } from '@/constants';
-import { fetchTasks } from '@/services/tasksApi';
 import { ToastStatus } from '../components/ToastStatus';
 
 interface TaskContextType {
@@ -10,7 +16,6 @@ interface TaskContextType {
   isModalOpen: boolean;
   errorMessage: string;
   setIsModalOpen: (isOpen: boolean) => void;
-  handleDownloadClick: () => Promise<void>;
   deleteTask: (id: string | number) => void;
   handleSaveForm: (taskData: Task) => Promise<Task> | Task;
   toastMessage: ToastStatus;
@@ -18,6 +23,7 @@ interface TaskContextType {
   isMounted: boolean;
   setTasks: (tasks: Task[]) => void;
   updateTaskStatus: (id: string | number, newState: string) => void;
+  deleteAllTasks: () => void;
 }
 
 export const TaskContext = createContext<TaskContextType | null>(null);
@@ -33,67 +39,49 @@ export function TaskProvider({ children }: TaskProviderProps) {
   const [errorMessage, setErrorMessage] = useState('');
   const [isMounted, setIsMounted] = useState(false);
 
-  // Controllo di locastorage al mount
   useEffect(() => {
-    let parsedTasks: Task[] = [];
-    try {
-      const savedTasks = localStorage.getItem('tasks');
-      if (savedTasks) {
-        const parsed: unknown = JSON.parse(savedTasks);
-        if (Array.isArray(parsed)) parsedTasks = parsed as Task[];
-        else localStorage.removeItem('tasks');
-      }
-    } catch (e) {
-      console.error('LocalStorage data corrupted.', e);
-      try {
-        localStorage.removeItem('tasks');
-      } catch {}
-    }
-
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsMounted(true);
-    if (parsedTasks.length > 0) {
-      setTasks(parsedTasks);
-    }
+
+    const loadInitialTasks = async () => {
+      try {
+        // Chiama la Server Action che interroga Prisma (SQLite)
+        const dbTasks = await fetchTasks();
+        setTasks(dbTasks);
+        setErrorMessage('');
+      } catch (error) {
+        console.error('Errore durante il caricamento dei task dal DB:', error);
+        setErrorMessage('Impossibile caricare le attività dal database.');
+        setToastMessage('error');
+      }
+    };
+
+    loadInitialTasks();
   }, []);
 
-  // Salvataggio automatico
-  useEffect(() => {
-    if (!isMounted) return;
-    try {
-      localStorage.setItem('tasks', JSON.stringify(tasks));
-    } catch (e) {
-      console.error('Unable to save tasks to LocalStorage.', e);
-    }
-  }, [tasks, isMounted]);
-
-  const handleDownloadClick = async () => {
-    try {
-      console.log('ciao');
-      const newTasks = await fetchTasks();
-      setTasks((prevTasks) => [...prevTasks, ...newTasks]);
-      setErrorMessage('');
-      setToastMessage('success');
-    } catch (error) {
-      setToastMessage('error');
-      if (error instanceof Error) {
-        setErrorMessage(error.message);
-      } else {
-        setErrorMessage('Errore sconosciuto');
-      }
-    }
-  };
-
   // Logica CRUD
-  function addTask(newTaskData: Task) {
-    const newTask = { ...newTaskData, id: crypto.randomUUID() };
+  function deleteAllTasks() {
+    setTasks([]);
+
+    deleteAllTasksFromDb().catch((error) => {
+      console.error(error);
+      setErrorMessage('Impossibile eliminare tutte le attività dal database.');
+      setToastMessage('error');
+    });
+  }
+
+  function addTask(newTask: Task) {
     setTasks((prevTasks) => [...prevTasks, newTask]);
-    return newTask;
   }
 
   function deleteTask(id: string | number) {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
     setIsModalOpen(false);
+
+    deleteTaskFromDb(id).catch((error) => {
+      console.error(error);
+      setErrorMessage("Impossibile eliminare l'attività dal database.");
+      setToastMessage('error');
+    });
   }
 
   function editTask(updatedTask: Task) {
@@ -107,6 +95,12 @@ export function TaskProvider({ children }: TaskProviderProps) {
     setTasks((prevTasks) =>
       prevTasks.map((task) => (task.id === id ? { ...task, status: newState } : task))
     );
+
+    updateTaskStatusInDb(id, newState).catch((error) => {
+      console.error(error);
+      setErrorMessage('Impossibile aggiornare lo stato nel database.');
+      setToastMessage('error');
+    });
   }
 
   async function handleSaveForm(taskData: Task) {
@@ -117,9 +111,19 @@ export function TaskProvider({ children }: TaskProviderProps) {
       savedTask = { ...taskData, id: taskID.id };
       editTask(savedTask);
     } else {
-      savedTask = addTask(taskData);
+      savedTask = { ...taskData, id: crypto.randomUUID() };
+      addTask(savedTask);
     }
+
     setIsModalOpen(false);
+
+    try {
+      await saveTaskToDb(savedTask);
+    } catch (error) {
+      console.error('Errore durante il salvataggio nel database', error);
+      setErrorMessage('Errore di salvataggio. Verifica la connessione.');
+      setToastMessage('error');
+    }
 
     return savedTask;
   }
@@ -131,7 +135,6 @@ export function TaskProvider({ children }: TaskProviderProps) {
         isModalOpen,
         errorMessage,
         setIsModalOpen,
-        handleDownloadClick,
         deleteTask,
         handleSaveForm,
         toastMessage,
@@ -139,6 +142,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
         isMounted,
         setTasks,
         updateTaskStatus,
+        deleteAllTasks,
       }}
     >
       {children}

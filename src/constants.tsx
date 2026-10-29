@@ -7,11 +7,10 @@ export interface Task {
   category: string;
   user: string;
   expire: string;
-  status: string; // Da fare, in corso, completato
-  description?: string;
+  status: string;
+  description?: string | null;
   checklist?: { id: string; text: string; done: boolean }[];
 }
-
 // Le "forme" dei dati di configurazione
 export interface User {
   value: string;

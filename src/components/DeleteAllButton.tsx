@@ -6,7 +6,7 @@ import { IconDelete } from './Icons';
 
 export default function DeleteAllButton() {
   const [showDeleteWarning, setShowDeleteWarning] = useState(false);
-  const { setTasks } = useTasks();
+  const { deleteAllTasks } = useTasks();
 
   return (
     <>
@@ -32,7 +32,7 @@ export default function DeleteAllButton() {
                   variant="danger"
                   onClick={() => {
                     setShowDeleteWarning(false);
-                    setTasks([]);
+                    deleteAllTasks();
                   }}
                 >
                   Sì, elimina tutto
