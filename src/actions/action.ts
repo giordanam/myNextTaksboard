@@ -49,3 +49,10 @@ export async function loginAction(_prevState: LoginState, formData: FormData): P
   }
   redirect('/');
 }
+
+export async function logoutAction() {
+  const cookieStore = await cookies();
+  cookieStore.delete('isAuthenticated');
+  cookieStore.delete('userName');
+  redirect('/login');
+}

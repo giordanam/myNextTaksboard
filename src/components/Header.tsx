@@ -1,20 +1,18 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation'; // <-- L'hook per capire dove siamo!
+import { usePathname } from 'next/navigation';
 import { useTasks } from '@/contexts/TaskContext';
 import Button from './Button';
 import { IconPlus, IconLogout } from './Icons';
+import { logoutAction } from '@/actions/action';
 
 export default function Header({ buttons }: { buttons?: React.ReactNode }) {
   const { setIsModalOpen } = useTasks();
   const pathname = usePathname();
-  const router = useRouter();
 
-  const handleLogout = () => {
-    document.cookie = 'isAuthenticated=false; path=/; max-age=0';
-    document.cookie = 'userName=; path=/; max-age=0';
-    router.push('/login');
+  const handleLogout = async () => {
+    await logoutAction();
   };
 
   return (
