@@ -24,6 +24,17 @@ npm run dev
 
 L'applicazione sarà disponibile all'indirizzo `http://localhost:3000`.
 
+## Prisma ORM e SQLite
+
+Prisma è configurato per usare SQLite. Lo schema si trova in `prisma/schema.prisma`, il database locale sarà creato in `prisma/dev.db` e il client è disponibile da `src/lib/prisma.ts`.
+
+```bash
+npm run db:generate
+npm run db:migrate -- --name init
+```
+
+Il comando di migrazione va eseguito dopo aver definito almeno un modello nello schema. Per ora la persistenza dell'applicazione continua a usare `localStorage`; Prisma è configurato ma non ancora collegato alle funzionalità della taskboard.
+
 ---
 
 ## Struttura del Progetto (App Router)
