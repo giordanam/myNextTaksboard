@@ -110,16 +110,20 @@ export function TaskProvider({ children }: TaskProviderProps) {
 
     if (taskID) {
       savedTask = { ...taskData, id: taskID.id };
-      editTask(savedTask);
     } else {
       savedTask = { ...taskData, id: crypto.randomUUID() };
-      addTask(savedTask);
     }
 
     setIsModalOpen(false);
 
     try {
       await saveTaskToDb(savedTask);
+
+      if (taskID) {
+        editTask(savedTask);
+      } else {
+        addTask(savedTask);
+      }
     } catch (error) {
       console.error('Errore durante il salvataggio nel database', error);
       setErrorMessage('Errore di salvataggio. Verifica la connessione.');

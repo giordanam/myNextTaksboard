@@ -6,7 +6,7 @@ import { useFilters } from '@/contexts/FilterContext';
 import { useTasks } from '@/contexts/TaskContext';
 import { getFilteredTasks } from '@/utils/filterUtils';
 import { IconPlus, IconSearch } from './Icons';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Task } from '@/constants';
 
 interface ListProps {
@@ -17,7 +17,7 @@ interface ListProps {
 
 function List({ isUserPage, initialTasks = [], userName }: ListProps) {
   const filters = useFilters();
-  const { tasks, setTasks, isMounted, updateTaskStatus } = useTasks();
+  const { tasks, updateTaskStatus } = useTasks();
   const [draggedFromStatus, setDraggedFromStatus] = useState<string | null>(null);
 
   const filteredTasks = getFilteredTasks(tasks, filters);

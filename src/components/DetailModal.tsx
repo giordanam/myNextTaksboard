@@ -18,6 +18,7 @@ export default function DetailModal({ onClose, task, onSave, onDelete }: DetailM
       <div className="fixed inset-0 bg-black/60 z-40 flex items-center justify-center p-4">
         <div className="relative bg-white rounded-xl w-full max-w-2xl p-0 overflow-hidden max-h-[90vh]">
           <Form
+            key={task ? `${task.id}-${task.status}` : 'new'}
             onClose={(isDirty: boolean) => (isDirty ? setShowWarning(true) : onClose())}
             task={task}
             onSave={onSave}
