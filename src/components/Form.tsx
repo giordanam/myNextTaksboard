@@ -58,7 +58,7 @@ export default function Form({ onClose, task, onSave, onDelete }: FormProps) {
               name="title"
               placeholder="Titolo"
               defaultValue={task ? task.title : ''}
-              className="w-full text-3xl font-bold rounded-xl focus-visible:outline-none focus-visible:border-sky-600 focus:ring-1 focus-visible:ring-sky-600"
+              className="w-full text-3xl font-bold py-3 px-2 rounded-xl focus-visible:outline-none focus-visible:border-sky-600 focus:ring-1 focus-visible:ring-sky-600"
               required
             />
           </div>
@@ -136,7 +136,7 @@ export default function Form({ onClose, task, onSave, onDelete }: FormProps) {
             <div className="flex flex-col items-start gap-1">
               <Button variant="ghost" onClick={() => onDelete(task.id!)} className="mt-2 gap-1.5">
                 <IconDelete className="size-4" />
-                Elimina Attività
+                Elimina attività
               </Button>
             </div>
           )}

@@ -13,12 +13,13 @@ interface DetailModalProps {
 
 export default function DetailModal({ onClose, task, onSave, onDelete }: DetailModalProps) {
   const [showWarning, setShowWarning] = useState(false);
+  const [resetKey, setResetKey] = useState(Date.now());
   return (
     <>
       <div className="fixed inset-0 bg-black/60 z-40 flex items-center justify-center p-4">
         <div className="relative bg-white rounded-xl w-full max-w-2xl p-0 overflow-hidden max-h-[90vh]">
           <Form
-            key={task ? `${task.id}-${task.status}` : 'new'}
+            key={task ? `${task.id}-${task.status}-${resetKey}` : `new-${resetKey}`}
             onClose={(isDirty: boolean) => (isDirty ? setShowWarning(true) : onClose())}
             task={task}
             onSave={onSave}
@@ -44,6 +45,7 @@ export default function DetailModal({ onClose, task, onSave, onDelete }: DetailM
                   <Button
                     variant="danger"
                     onClick={() => {
+                      setResetKey(Date.now());
                       setShowWarning(false);
                       onClose();
                     }}
