@@ -66,7 +66,7 @@ src/
 ├── lib/
 │  └── prisma.ts # Istanza globale del Prisma Client (singleton)
 ├── services/ # Server Actions per CRUD su database Prisma (tasksApi.ts)
-├── utils/ # Funzioni di utilità (filterUtils, apiUtils, dateUtils)
+├── utils/ # Funzioni di utilità (filterUtils, dateUtils)
 ├── constants.tsx # Costanti globali e dati statici
 └── proxy.ts # Protezione delle rotte private e controllo accessi
 ```
