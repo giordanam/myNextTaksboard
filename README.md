@@ -8,8 +8,8 @@ Una moderna applicazione per la gestione delle attività (Taskboard), migrata da
 - **Linguaggio:** TypeScript
 - **Styling:** Tailwind CSS
 - **Stato Globale:** React Context API (`TaskContext`, `FilterContext`)
-- **Persistenza:** LocalStorage
-- **Funzionalità Next.js Avanzate:** Parallel Routes, Intercepting Routes, Server Fetching, Suspense, Streaming UI (`loading.tsx`)
+- **Persistenza:** SQLite gestito tramite Prisma ORM (Server Actions)
+- **Funzionalità Next.js Avanzate:** Parallel Routes, Intercepting Routes, Server Fetching, Server Actions, Suspense, Streaming UI (`loading.tsx`), State Syncing in tempo reale
 
 ---
 
@@ -26,14 +26,14 @@ L'applicazione sarà disponibile all'indirizzo `http://localhost:3000`.
 
 ## Prisma ORM e SQLite
 
-Prisma è configurato per usare SQLite. Lo schema si trova in `prisma/schema.prisma`, il database locale sarà creato in `prisma/dev.db` e il client è disponibile da `src/lib/prisma.ts`.
+L'applicazione utilizza un database SQLite per la persistenza reale dei dati, gestito tramite l'ORM Prisma. Lo schema relazionale (Task e User) si trova in prisma/schema.prisma, il database locale risiede in prisma/dev.db e il client è disponibile da src/lib/prisma.ts.
+
+Per inizializzare il database e popolarlo con gli utenti di base:
 
 ```bash
-npm run db:generate
-npm run db:migrate -- --name init
+npx prisma db push
+npx prisma db seed
 ```
-
-Il comando di migrazione va eseguito dopo aver definito almeno un modello nello schema. Per ora la persistenza dell'applicazione continua a usare `localStorage`; Prisma è configurato ma non ancora collegato alle funzionalità della taskboard.
 
 ---
 
@@ -43,6 +43,8 @@ Il progetto sfrutta le convenzioni di routing avanzate di Next.js, come i Route 
 
 ```
 src/
+├── actions/
+│  └── actions.ts # Login server action
 ├── app/
 │ ├── (dashboard)/ # Route Group: Condivide il layout senza alterare l'URL
 │ │ ├── user/
@@ -61,7 +63,9 @@ src/
 │ └── layout.tsx # Root Layout con i Provider globali (Context)
 ├── components/ # Client e Server Components (List, Card, FilterBar, ecc.)
 ├── contexts/ # Gestione dello stato globale (TaskContext, FilterContext)
-├── services/ # Chiamate API (tasksApi.ts)
+├── lib/
+│  └── prisma.ts # Istanza globale del Prisma Client (singleton)
+├── services/ # Server Actions per CRUD su database Prisma (tasksApi.ts)
 ├── utils/ # Funzioni di utilità (filterUtils, apiUtils, dateUtils)
 ├── constants.tsx # Costanti globali e dati statici
 └── proxy.ts # Protezione delle rotte private e controllo accessi
@@ -71,11 +75,11 @@ src/
 
 ## Architettura dei Dati: Fetching e Hydration
 
-Per garantire la massima velocità di caricamento e un'ottima User Experience, l'applicazione utilizza un approccio ibrido per i dati:
+Per garantire la massima velocità di caricamento e una User Experience fluida, l'applicazione utilizza un'architettura ibrida avanzata:
 
-1. **Server-Side Fetching:** Il file `page.tsx` effettua la richiesta dati iniziale sul server senza bloccare l'interfaccia utente (grazie a `loading.tsx`).
-2. **Client-Side Hydration:** Il componente `<List>` funge da ponte. Al primo accesso (quando il `localStorage` è vuoto), riceve i dati del server e innesca il salvataggio nel `TaskContext`.
-3. **Persistenza Continua:** Da quel momento in poi, il `TaskContext` prende il pieno controllo, gestendo in modo autonomo il salvataggio automatico sul browser tramite `localStorage`.
+1. Server-Side Fetching: Il file `page.tsx` effettua la query iniziale al database tramite Prisma prima ancora di renderizzare la pagina, garantendo dati freschi ed eliminando i tempi di caricamento lato client.
+2. Context Inizializzato (Pre-fetching): Il componente `<List>` riceve i dati dal server (initialTasks) e li mostra istantaneamente per evitare il "Flash of Empty State" (FOES), mentre il Context si sincronizza in background.
+3. Aggiornamento in Tempo Reale e Async Sync: Durante le interazioni (come il Drag & Drop o le modifiche nel Form), React aggiorna immediatamente lo stato del TaskContext per un feedback visivo istantaneo. Parallelamente, le modifiche vengono inviate al database tramite Server Actions. I form utilizzano la prop key dinamica per forzare un rendering pulito alla ricezione di nuovi dati.
 
 ---
 
