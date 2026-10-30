@@ -14,6 +14,10 @@ export default function TaskDetail({ id, onClose }: TaskDetailProps) {
 
   if (!isMounted) return null;
 
+  if (tasks.length === 0) {
+    return null;
+  }
+
   const task = tasks.find((t) => t.id === id) || null;
 
   if (!task) {
