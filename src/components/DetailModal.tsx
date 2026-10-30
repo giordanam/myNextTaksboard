@@ -13,7 +13,7 @@ interface DetailModalProps {
 
 export default function DetailModal({ onClose, task, onSave, onDelete }: DetailModalProps) {
   const [showWarning, setShowWarning] = useState(false);
-  const [resetKey, setResetKey] = useState(Date.now());
+  const [resetKey, setResetKey] = useState(0);
   return (
     <>
       <div className="fixed inset-0 bg-black/60 z-40 flex items-center justify-center p-4">
@@ -45,7 +45,7 @@ export default function DetailModal({ onClose, task, onSave, onDelete }: DetailM
                   <Button
                     variant="danger"
                     onClick={() => {
-                      setResetKey(Date.now());
+                      setResetKey((prev) => prev + 1);
                       setShowWarning(false);
                       onClose();
                     }}
