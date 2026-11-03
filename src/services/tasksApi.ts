@@ -18,13 +18,17 @@ export async function fetchTasks() {
 
 // SALVA O AGGIORNA UN TASK
 export async function saveTaskToDb(task: Task) {
-  const { id, checklist, ...taskData } = task;
+  const { id, checklist, expire, ...taskData } = task;
+
+  const safeExpireDate = new Date(expire);
+  safeExpireDate.setUTCHours(12, 0, 0, 0);
 
   // upsert: aggiorna se esiste, altrimenti crea un nuovo task
   return await prisma.task.upsert({
     where: { id: String(id) },
     update: {
       ...taskData,
+      expire: safeExpireDate,
       checklist: {
         deleteMany: {},
         create: checklist?.map((item) => ({ text: item.text, done: item.done })) || [],
@@ -33,6 +37,7 @@ export async function saveTaskToDb(task: Task) {
     create: {
       id: String(id),
       ...taskData,
+      expire: safeExpireDate,
       checklist: {
         create: checklist?.map((item) => ({ text: item.text, done: item.done })) || [],
       },

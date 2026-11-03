@@ -26,3 +26,15 @@ Adesso in Next.js il componente diventa una semplice funzione asincrona: ho fatt
 
 **Riflessioni e difficoltà**
 A livello di difficoltà, allo stesso modo dell'es2, è stato difficile capire bene il flusso logico della fetch e della divisione appunto tra server e client, e quindi fare refactor del mio codice per rendere appunto il server un server e il client un client. Questa divisione netta ha molti pro sia a livello di leggibilità del codice, sia a livello di logica vera e propria dell'applicazione. Allo stesso tempo, però, è la parte più complicata quando si passa dalla logica di un'app react semplice alla logica di un'app next. Infatti la sfida più difficile è stata sempre gestire l'Hydration Mismatch, ma alla fine è stato più semplice del previsto...
+
+### 3. Decisione sul tipo di dato per `expire` (Risoluzione Bug UTC)
+
+Il piano richiedeva di definire con precisione se la scadenza fosse una data pura o una data con orario.
+
+**Decisione:**
+Nello schema Prisma, il campo `expire` verrà modificato da `String` a **`DateTime`**.
+Tuttavia, a livello di logica di business, le scadenze delle task sono intese come "Data pura" (il giorno specifico), senza un orario rilevante.
+
+**Gestione del Bug Ora locale/UTC (Fase 1B):**
+Essendo Prisma vincolato al tipo `DateTime` (che include fuso orario e orario), si presenta il noto bug per cui una data selezionata a mezzanotte (00:00:00) in un fuso orario come quello italiano (UTC+1/UTC+2) verrebbe salvata nel DB come le 22:00 o 23:00 del giorno precedente in formato UTC.
+Per neutralizzare questo fuso orario e garantire che il frontend mostri sempre lo stesso giorno solare indipendentemente dalla localizzazione dell'utente, la strategia adottata è quella di intercettare il dato nel form (o nella Server Action) e forzare l'orario del giorno selezionato esattamente alle **12:00:00 UTC** (mezzogiorno assoluto) prima del salvataggio nel database.
