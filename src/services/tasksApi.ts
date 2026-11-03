@@ -44,13 +44,13 @@ export async function saveTaskToDb(task: unknown) {
 }
 
 // ELIMINA UN TASK
-export async function deleteTaskFromDb(id: string | number) {
+export async function deleteTaskFromDb(id: unknown) {
   const validId = z.string().min(1).parse(String(id));
   await prisma.task.delete({ where: { id: validId } });
 }
 
 // AGGIORNA SOLO LO STATO (Drag & Drop)
-export async function updateTaskStatusInDb(id: string | number, status: string) {
+export async function updateTaskStatusInDb(id: unknown, status: unknown) {
   const validId = z.string().min(1).parse(String(id));
   const validStatus = statusSchema.parse(status);
   await prisma.task.update({
