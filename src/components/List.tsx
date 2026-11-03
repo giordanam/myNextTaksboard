@@ -7,16 +7,14 @@ import { useTasks } from '@/contexts/TaskContext';
 import { getFilteredTasks } from '@/utils/filterUtils';
 import { IconPlus, IconSearch } from './Icons';
 import { useState } from 'react';
-import { Task } from '@/constants';
 import ListSkeleton from './ListSkeleton';
 
 interface ListProps {
   isUserPage?: boolean;
-  initialTasks?: Task[];
   userName?: string;
 }
 
-function List({ isUserPage, initialTasks = [], userName }: ListProps) {
+function List({ isUserPage, userName }: ListProps) {
   const filters = useFilters();
   const { tasks, updateTaskStatus, isLoading } = useTasks();
   const [draggedFromStatus, setDraggedFromStatus] = useState<string | null>(null);
@@ -25,9 +23,7 @@ function List({ isUserPage, initialTasks = [], userName }: ListProps) {
     return <ListSkeleton />;
   }
 
-  const currentTasks = tasks.length > 0 ? tasks : initialTasks;
-
-  const filteredTasks = getFilteredTasks(currentTasks, filters);
+  const filteredTasks = getFilteredTasks(tasks, filters);
 
   const displayedTasks = isUserPage
     ? filteredTasks.filter((task) => task.userId === userName)
