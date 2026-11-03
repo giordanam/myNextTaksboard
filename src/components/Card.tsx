@@ -11,6 +11,11 @@ interface CardProps {
 export default function Card({ task, onDragStartAction, onDragEndAction }: CardProps) {
   const category = CATEGORIES.find((category) => task.category === category.value);
   const user = USERS.find((user) => task.userId === user.value);
+  const formattedExpire = new Intl.DateTimeFormat('it-IT', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(new Date(task.expire));
 
   return (
     <Link
@@ -36,7 +41,7 @@ export default function Card({ task, onDragStartAction, onDragEndAction }: CardP
       <div className="flex justify-between items-center mt-auto pt-4 border-t border-gray-100">
         <div className="flex items-center gap-1 text-gray-500 text-m">
           <IconTime className={'size-5'} />
-          <span>{task.expire.split('-').reverse().join('/')}</span>
+          <span>{formattedExpire}</span>
         </div>
         <div
           className="w-10 h-10 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-sm font-bold"

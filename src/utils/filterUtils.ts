@@ -1,4 +1,3 @@
-import { getLocalDateString } from './dateUtils'; // Via il .js!
 import { Task } from '@/constants'; // Importiamo la nostra fonte di verità
 
 // Definiamo la forma esatta dell'oggetto filters
@@ -17,12 +16,15 @@ export function getFilteredTasks(tasks: Task[], filters: FilterOptions): Task[] 
     const matchTitle = task.title.toLowerCase().includes(searchQuery.toLowerCase());
     const matchCategory = categoryFilter === '' || task.category === categoryFilter;
     const matchUser = userFilter === '' || task.userId === userFilter;
-    const today = getLocalDateString();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const taskExpire = new Date(task.expire);
+    taskExpire.setHours(0, 0, 0, 0);
 
     const matchExpire =
       expireFilter === '' ||
-      (expireFilter === 'expired' && task.expire < today) ||
-      (expireFilter === 'not-expired' && task.expire >= today);
+      (expireFilter === 'expired' && taskExpire < today) ||
+      (expireFilter === 'not-expired' && taskExpire >= today);
 
     return matchTitle && matchUser && matchExpire && matchCategory;
   });
