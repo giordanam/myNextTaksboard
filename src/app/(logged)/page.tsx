@@ -6,7 +6,5 @@ import Dashboard from '@/components/Dashboard';
 export default async function Page() {
   let initialTasks: Task[] = [];
 
-  initialTasks = await fetchTasks();
-
   return <Dashboard initialTasks={initialTasks}></Dashboard>;
 }

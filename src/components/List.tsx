@@ -8,6 +8,7 @@ import { getFilteredTasks } from '@/utils/filterUtils';
 import { IconPlus, IconSearch } from './Icons';
 import { useState } from 'react';
 import { Task } from '@/constants';
+import ListSkeleton from './ListSkeleton';
 
 interface ListProps {
   isUserPage?: boolean;
@@ -17,8 +18,12 @@ interface ListProps {
 
 function List({ isUserPage, initialTasks = [], userName }: ListProps) {
   const filters = useFilters();
-  const { tasks, updateTaskStatus } = useTasks();
+  const { tasks, updateTaskStatus, isLoading } = useTasks();
   const [draggedFromStatus, setDraggedFromStatus] = useState<string | null>(null);
+
+  if (isLoading) {
+    return <ListSkeleton />;
+  }
 
   const currentTasks = tasks.length > 0 ? tasks : initialTasks;
 
