@@ -66,7 +66,7 @@ export default function ToastStatus({ toastStatus, onDismiss, errorMessage }: To
         <div className="flex items-center p-6 bg-red-100 border-l-8 border-red-600 text-red-800 min-w-[300px]">
           <span className="text-2xl mr-4">❌</span>
           <div>
-            <h3 className="font-bold text-lg">Impossibile scaricare</h3>
+            <h3 className="font-bold text-lg">Operazione fallita</h3>
             <p>{errorMessage}</p>
           </div>
         </div>
