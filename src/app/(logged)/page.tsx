@@ -1,5 +1,4 @@
 // Server Component
-import { fetchTasks } from '@/services/tasksApi';
 import { Task } from '@/constants';
 import Dashboard from '@/components/Dashboard';
 
