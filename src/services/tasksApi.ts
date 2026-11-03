@@ -1,7 +1,8 @@
 'use server';
 
 import { prisma } from '@/lib/prisma';
-import type { Task } from '@/constants';
+import { z } from 'zod';
+import { statusSchema, taskSchema } from '@/utils/validation';
 
 export async function fetchTasks() {
   if (process.env.NEXT_PUBLIC_ENABLE_DEBUG === 'true') {
@@ -17,8 +18,9 @@ export async function fetchTasks() {
 }
 
 // SALVA O AGGIORNA UN TASK
-export async function saveTaskToDb(task: Task) {
-  const { id, checklist, ...taskData } = task;
+export async function saveTaskToDb(task: unknown) {
+  const validTask = taskSchema.parse(task);
+  const { id, checklist, ...taskData } = validTask;
 
   // upsert: aggiorna se esiste, altrimenti crea un nuovo task
   return await prisma.task.upsert({
@@ -43,14 +45,17 @@ export async function saveTaskToDb(task: Task) {
 
 // ELIMINA UN TASK
 export async function deleteTaskFromDb(id: string | number) {
-  await prisma.task.delete({ where: { id: String(id) } });
+  const validId = z.string().min(1).parse(String(id));
+  await prisma.task.delete({ where: { id: validId } });
 }
 
 // AGGIORNA SOLO LO STATO (Drag & Drop)
 export async function updateTaskStatusInDb(id: string | number, status: string) {
+  const validId = z.string().min(1).parse(String(id));
+  const validStatus = statusSchema.parse(status);
   await prisma.task.update({
-    where: { id: String(id) },
-    data: { status },
+    where: { id: validId },
+    data: { status: validStatus },
   });
 }
 

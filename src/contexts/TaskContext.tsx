@@ -63,14 +63,16 @@ export function TaskProvider({ children }: TaskProviderProps) {
   }, []);
 
   // Logica CRUD
-  function deleteAllTasks() {
-    setTasks([]);
-
-    deleteAllTasksFromDb().catch((error) => {
+  async function deleteAllTasks() {
+    try {
+      await deleteAllTasksFromDb();
+      setTasks([]);
+      setToastMessage('success_del');
+    } catch (error) {
       console.error(error);
       setErrorMessage('Impossibile eliminare tutte le attività dal database.');
       setToastMessage('error');
-    });
+    }
   }
 
   function addTask(newTask: Task) {
@@ -126,13 +128,13 @@ export function TaskProvider({ children }: TaskProviderProps) {
     setIsModalOpen(false);
 
     try {
-      await saveTaskToDb(savedTask);
+      const taskFromDb = await saveTaskToDb(savedTask);
 
       if (taskID) {
-        editTask(savedTask);
+        editTask(taskFromDb);
         setToastMessage('success_edit');
       } else {
-        addTask(savedTask);
+        addTask(taskFromDb);
         setToastMessage('success_add');
       }
     } catch (error) {
