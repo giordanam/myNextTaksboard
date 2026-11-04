@@ -28,10 +28,10 @@ L'applicazione sarà disponibile all'indirizzo `http://localhost:3000`.
 
 L'applicazione utilizza un database SQLite per la persistenza reale dei dati, gestito tramite l'ORM Prisma. Lo schema relazionale (Task e User) si trova in prisma/schema.prisma, il database locale risiede in prisma/dev.db e il client è disponibile da src/lib/prisma.ts.
 
-Per inizializzare il database e popolarlo con gli utenti di base:
+Per inizializzare il database, applicare le migration e popolarlo con gli utenti di base:
 
 ```bash
-npx prisma db push
+npx prisma migrate dev
 npx prisma db seed
 ```
 
