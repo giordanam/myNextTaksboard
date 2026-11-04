@@ -10,13 +10,11 @@ interface TaskDetailProps {
 }
 
 export default function TaskDetail({ id, onClose }: TaskDetailProps) {
-  const { tasks, handleSaveForm, deleteTask, isMounted } = useTasks();
+  const { tasks, handleSaveForm, deleteTask, isMounted, isLoading } = useTasks();
 
   if (!isMounted) return null;
 
-  if (tasks.length === 0) {
-    return null;
-  }
+  if (isLoading) return null;
 
   const task = tasks.find((t) => t.id === id) || null;
 
