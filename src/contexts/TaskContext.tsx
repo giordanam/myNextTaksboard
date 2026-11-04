@@ -23,6 +23,7 @@ interface TaskContextType {
   isMounted: boolean;
   setTasks: (tasks: Task[]) => void;
   updateTaskStatus: (id: string | number, newState: string) => void;
+  isLoading: boolean;
   deleteAllTasks: () => void;
 }
 
@@ -38,6 +39,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isMounted, setIsMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -46,6 +48,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
     const loadInitialTasks = async () => {
       try {
         // Chiama la Server Action che interroga Prisma (SQLite)
+        setIsLoading(true);
         const dbTasks = await fetchTasks();
         setTasks(dbTasks);
         setErrorMessage('');
@@ -56,7 +59,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
       }
     };
 
-    loadInitialTasks();
+    loadInitialTasks().finally(() => setIsLoading(false));
   }, []);
 
   // Logica CRUD
@@ -151,6 +154,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
         setTasks,
         updateTaskStatus,
         deleteAllTasks,
+        isLoading,
       }}
     >
       {children}
