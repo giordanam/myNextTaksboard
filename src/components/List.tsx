@@ -11,10 +11,11 @@ import ListSkeleton from './ListSkeleton';
 
 interface ListProps {
   isUserPage?: boolean;
+  userId?: string;
   userName?: string;
 }
 
-function List({ isUserPage, userName }: ListProps) {
+function List({ isUserPage, userId, userName }: ListProps) {
   const filters = useFilters();
   const { tasks, updateTaskStatus, isLoading } = useTasks();
   const [draggedFromStatus, setDraggedFromStatus] = useState<string | null>(null);
@@ -26,7 +27,7 @@ function List({ isUserPage, userName }: ListProps) {
   const filteredTasks = getFilteredTasks(tasks, filters);
 
   const displayedTasks = isUserPage
-    ? filteredTasks.filter((task) => task.userId === userName)
+    ? filteredTasks.filter((task) => task.userId === userId)
     : filteredTasks;
 
   const hasDisplayedTasks = displayedTasks.length > 0;

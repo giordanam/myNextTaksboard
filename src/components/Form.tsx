@@ -1,5 +1,6 @@
 import { SubmitEvent, useEffect, useState } from 'react';
-import { USERS, CATEGORIES, STATUS, Task } from '@/constants';
+import { CATEGORIES, STATUS, Task } from '@/constants';
+import { useTasks } from '@/contexts/TaskContext';
 import FormSelect from './FormSelect';
 import Checklist, { ChecklistItemType } from './Checklist';
 import { IconCloseForm, IconDelete, IconDescriptionAndColumn, IconManage, IconTime } from './Icons';
@@ -14,6 +15,8 @@ interface FormProps {
 
 export default function Form({ onClose, task, onSave, onDelete }: FormProps) {
   const isNewTask = task === null;
+  const { users } = useTasks();
+  const userOptions = users.map((user) => ({ value: user.id, label: user.name }));
   const [checklist, setChecklist] = useState<ChecklistItemType[]>(task?.checklist || []);
   const [isDirty, setIsDirty] = useState(false);
 
@@ -104,8 +107,8 @@ export default function Form({ onClose, task, onSave, onDelete }: FormProps) {
                 <FormSelect
                   label="Assegnato a"
                   name="userId"
-                  defaultValue={task ? task.userId : 'giordana'}
-                  options={USERS}
+                  defaultValue={task ? task.userId : users[0]?.id}
+                  options={userOptions}
                 />
               </div>
               <div>

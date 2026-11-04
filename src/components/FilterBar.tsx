@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useFilters } from '@/contexts/FilterContext';
-import { CATEGORIES, USERS, EXPIRES } from '@/constants';
+import { useTasks } from '@/contexts/TaskContext';
+import { CATEGORIES, EXPIRES } from '@/constants';
 import { IconCategory, IconFilters, IconSearch, IconTime, IconUser } from './Icons';
 import Button from './Button';
 
@@ -12,6 +13,7 @@ interface FilterBarProps {
 
 export default function FilterBar({ isUserPage }: FilterBarProps) {
   const [isFiltersOpen, setFiltersOpen] = useState(false);
+  const { users } = useTasks();
   const {
     searchQuery,
     setSearchQuery,
@@ -101,9 +103,9 @@ export default function FilterBar({ isUserPage }: FilterBarProps) {
                   className="py-2 px-3 w-full bg-white text-gray-900 focus:outline-none focus:border-sky-600 focus:ring-1 focus:ring-sky-600 rounded-xl"
                 >
                   <option value="">Tutti gli utenti...</option>
-                  {USERS.map((user) => (
-                    <option key={user.value} value={user.value}>
-                      {user.label}
+                  {users.map((user) => (
+                    <option key={user.id} value={user.id}>
+                      {user.name}
                     </option>
                   ))}
                 </select>

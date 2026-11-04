@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { IconClock, IconComplete, IconDescriptionAndColumn } from './components/Icons'; // Verifica che il percorso sia corretto rispetto a dove hai salvato Icons.tsx!
+import { IconClock, IconComplete, IconDescriptionAndColumn } from './components/Icons';
 
 export interface Task {
   id: string;
@@ -13,9 +13,8 @@ export interface Task {
 }
 // Le "forme" dei dati di configurazione
 export interface User {
-  value: string;
-  label: string;
-  initials: string;
+  id: string;
+  name: string;
 }
 
 export interface Category {
@@ -35,14 +34,6 @@ export interface Expire {
 }
 
 // I dati reali
-export const USERS: User[] = [
-  { value: 'giordana', label: 'Giordana Martucci', initials: 'GM' },
-  { value: 'lucio', label: 'Lucio Morelli', initials: 'LM' },
-  { value: 'matteo', label: 'Matteo Di Donato', initials: 'MD' },
-  { value: 'federico', label: 'Federico Micello', initials: 'FM' },
-  { value: 'delin', label: 'Delin Squarcella', initials: 'DS' },
-];
-
 export const CATEGORIES: Category[] = [
   { value: 'design', label: 'Design' },
   { value: 'dev', label: 'Sviluppo' },

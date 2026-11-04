@@ -17,6 +17,13 @@ export async function fetchTasks() {
   return tasks;
 }
 
+export async function fetchUsers() {
+  return await prisma.user.findMany({
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' },
+  });
+}
+
 // SALVA O AGGIORNA UN TASK
 export async function saveTaskToDb(task: unknown) {
   const validTask = taskSchema.parse(task);

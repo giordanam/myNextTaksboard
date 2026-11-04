@@ -1,9 +1,8 @@
 import { z } from 'zod';
-import { STATUS, CATEGORIES, EXPIRES } from '@/constants';
+import { STATUS, CATEGORIES } from '@/constants';
 
 const validStatuses = STATUS.map((s) => s.value) as [string, ...string[]];
 const validCategories = CATEGORIES.map((c) => c.value) as [string, ...string[]];
-const validExpires = EXPIRES.map((e) => e.value) as [string, ...string[]];
 
 export const statusSchema = z.enum(validStatuses);
 
@@ -19,7 +18,7 @@ export const taskSchema = z.object({
 
   category: z.enum(validCategories),
   status: z.enum(validStatuses),
-  expire: z.enum(validExpires),
+  expire: z.iso.date(),
   userId: z.string().min(1, 'Utente obbligatorio'),
 
   description: z.string().nullable().optional(),
