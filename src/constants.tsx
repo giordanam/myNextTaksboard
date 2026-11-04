@@ -6,7 +6,7 @@ export interface Task {
   title: string;
   category: string;
   userId: string;
-  expire: string;
+  expire: Date;
   status: string;
   description?: string | null;
   checklist?: { id: string; text: string; done: boolean }[];

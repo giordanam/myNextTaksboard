@@ -19,7 +19,7 @@ model Task {
   id          String          @id @default(cuid())
   title       String
   category    String
-  expire      String
+  expire      DateTime
   status      String
   description String?
 

@@ -41,6 +41,8 @@ export default function Form({ onClose, task, onSave, onDelete }: FormProps) {
     onSave(taskData);
   }
 
+  const defaultDate = task?.expire ? new Date(task.expire).toISOString().split('T')[0] : '';
+
   return (
     <form onSubmit={handleSubmit} onChange={() => setIsDirty(true)}>
       <div className="flex flex-col max-h-[90vh]">
@@ -122,7 +124,7 @@ export default function Form({ onClose, task, onSave, onDelete }: FormProps) {
                     type="date"
                     id="task-expire"
                     name="expire"
-                    defaultValue={task ? task.expire : ''}
+                    defaultValue={defaultDate}
                     className="w-full bg-white border border-gray-200 text-sm rounded-md px-3 py-2 text-gray-700 focus:ring-2 focus:ring-sky-500 outline-none"
                     required
                   />

@@ -23,6 +23,7 @@ interface TaskContextType {
   isMounted: boolean;
   setTasks: (tasks: Task[]) => void;
   updateTaskStatus: (id: string | number, newState: string) => void;
+  isLoading: boolean;
   deleteAllTasks: () => void;
 }
 
@@ -38,6 +39,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [isMounted, setIsMounted] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -46,6 +48,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
     const loadInitialTasks = async () => {
       try {
         // Chiama la Server Action che interroga Prisma (SQLite)
+        setIsLoading(true);
         const dbTasks = await fetchTasks();
         setTasks(dbTasks);
         setErrorMessage('');
@@ -56,34 +59,39 @@ export function TaskProvider({ children }: TaskProviderProps) {
       }
     };
 
-    loadInitialTasks();
+    loadInitialTasks().finally(() => setIsLoading(false));
   }, []);
 
   // Logica CRUD
-  function deleteAllTasks() {
-    setTasks([]);
-
-    deleteAllTasksFromDb().catch((error) => {
+  async function deleteAllTasks() {
+    try {
+      await deleteAllTasksFromDb();
+      setTasks([]);
+      setToastMessage('success_del');
+    } catch (error) {
       console.error(error);
       setErrorMessage('Impossibile eliminare tutte le attività dal database.');
       setToastMessage('error');
-    });
+    }
   }
 
   function addTask(newTask: Task) {
     setTasks((prevTasks) => [...prevTasks, newTask]);
   }
 
-  function deleteTask(id: string | number) {
-    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+  async function deleteTask(id: string | number) {
     setIsModalOpen(false);
-    setToastMessage('success_del');
 
-    deleteTaskFromDb(id).catch((error) => {
+    try {
+      await deleteTaskFromDb(id);
+
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+      setToastMessage('success_del');
+    } catch (error) {
       console.error(error);
       setErrorMessage("Impossibile eliminare l'attività dal database.");
       setToastMessage('error');
-    });
+    }
   }
 
   function editTask(updatedTask: Task) {
@@ -93,16 +101,18 @@ export function TaskProvider({ children }: TaskProviderProps) {
   }
 
   //funzione per aggiornare solo lki stato di un task
-  function updateTaskStatus(id: string | number, newState: string) {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => (task.id === id ? { ...task, status: newState } : task))
-    );
+  async function updateTaskStatus(id: string | number, newState: string) {
+    try {
+      await updateTaskStatusInDb(id, newState);
 
-    updateTaskStatusInDb(id, newState).catch((error) => {
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task.id === id ? { ...task, status: newState } : task))
+      );
+    } catch (error) {
       console.error(error);
       setErrorMessage('Impossibile aggiornare lo stato nel database.');
       setToastMessage('error');
-    });
+    }
   }
 
   async function handleSaveForm(taskData: Task) {
@@ -118,13 +128,13 @@ export function TaskProvider({ children }: TaskProviderProps) {
     setIsModalOpen(false);
 
     try {
-      await saveTaskToDb(savedTask);
+      const taskFromDb = await saveTaskToDb(savedTask);
 
       if (taskID) {
-        editTask(savedTask);
+        editTask(taskFromDb);
         setToastMessage('success_edit');
       } else {
-        addTask(savedTask);
+        addTask(taskFromDb);
         setToastMessage('success_add');
       }
     } catch (error) {
@@ -151,6 +161,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
         setTasks,
         updateTaskStatus,
         deleteAllTasks,
+        isLoading,
       }}
     >
       {children}
