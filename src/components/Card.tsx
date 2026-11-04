@@ -1,4 +1,5 @@
-import { USERS, CATEGORIES, Task } from '@/constants';
+import { CATEGORIES, Task } from '@/constants';
+import { useTasks } from '@/contexts/TaskContext';
 import { IconTime } from './Icons';
 import Link from 'next/link';
 
@@ -8,9 +9,15 @@ interface CardProps {
   onDragEndAction?: () => void;
 }
 
+function getInitials(name: string) {
+  const words = name.trim().split(/\s+/);
+  return (words[0][0] + (words.length > 1 ? words[words.length - 1][0] : '')).toUpperCase();
+}
+
 export default function Card({ task, onDragStartAction, onDragEndAction }: CardProps) {
+  const { users } = useTasks();
   const category = CATEGORIES.find((category) => task.category === category.value);
-  const user = USERS.find((user) => task.userId === user.value);
+  const user = users.find((user) => task.userId === user.id);
   const formattedExpire = new Intl.DateTimeFormat('it-IT', {
     day: '2-digit',
     month: '2-digit',
@@ -45,9 +52,9 @@ export default function Card({ task, onDragStartAction, onDragEndAction }: CardP
         </div>
         <div
           className="w-10 h-10 rounded-full bg-sky-100 text-sky-700 flex items-center justify-center text-sm font-bold"
-          title={user?.label}
+          title={user?.name}
         >
-          {user?.initials || '?'}
+          {user ? getInitials(user.name) : '?'}
         </div>
       </div>
     </Link>

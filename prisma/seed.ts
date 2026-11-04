@@ -1,18 +1,18 @@
 import 'dotenv/config';
 import { prisma } from '../src/lib/prisma';
 
-const createMany = await prisma.user.createMany({
-  data: [
-    { id: 'giordana', username: 'giordana', password: 'password123' },
-    { id: 'lucio', username: 'lucio', password: 'password123' },
-    { id: 'matteo', username: 'matteo', password: 'password123' },
-    { id: 'federico', username: 'federico', password: 'password123' },
-    { id: 'delin', username: 'delin', password: 'password123' },
-  ],
-});
-
 async function main() {
   console.log('Inizio il seed del database...');
+
+  const createMany = await prisma.user.createMany({
+    data: [
+      { username: 'giordana', name: 'Giordana Martucci', password: 'password123' },
+      { username: 'lucio', name: 'Lucio Morelli', password: 'password123' },
+      { username: 'matteo', name: 'Matteo Di Donato', password: 'password123' },
+      { username: 'federico', name: 'Federico Micello', password: 'password123' },
+      { username: 'delin', name: 'Delin Squarcella', password: 'password123' },
+    ],
+  });
 
   console.log('Utenti creati:', createMany);
 

@@ -3,16 +3,18 @@
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import {
   fetchTasks,
+  fetchUsers,
   saveTaskToDb,
   deleteTaskFromDb,
   updateTaskStatusInDb,
   deleteAllTasksFromDb,
 } from '@/services/tasksApi';
-import { Task } from '@/constants';
+import { Task, User } from '@/constants';
 import { ToastStatus } from '../components/ToastStatus';
 
 interface TaskContextType {
   tasks: Task[];
+  users: User[];
   isModalOpen: boolean;
   errorMessage: string;
   setIsModalOpen: (isOpen: boolean) => void;
@@ -35,6 +37,7 @@ interface TaskProviderProps {
 
 export function TaskProvider({ children }: TaskProviderProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [toastMessage, setToastMessage] = useState<ToastStatus>('idle');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -49,8 +52,9 @@ export function TaskProvider({ children }: TaskProviderProps) {
       try {
         // Chiama la Server Action che interroga Prisma (SQLite)
         setIsLoading(true);
-        const dbTasks = await fetchTasks();
+        const [dbTasks, dbUsers] = await Promise.all([fetchTasks(), fetchUsers()]);
         setTasks(dbTasks);
+        setUsers(dbUsers);
         setErrorMessage('');
       } catch (error) {
         console.error('Errore durante il caricamento dei task dal DB:', error);
@@ -150,6 +154,7 @@ export function TaskProvider({ children }: TaskProviderProps) {
     <TaskContext.Provider
       value={{
         tasks,
+        users,
         isModalOpen,
         errorMessage,
         setIsModalOpen,
